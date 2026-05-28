@@ -1,0 +1,67 @@
+/* =========================
+   FILTER SECTION
+========================= */
+
+.appointment-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.filter-btn {
+    padding: 8px 14px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.filter-btn:hover {
+    background: #f3f4f6;
+}
+
+.filter-active {
+    padding: 8px 14px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    border-radius: 8px;
+    font-size: 14px;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+}
+
+
+
+@media (max-width: 768px) {
+   
+
+    .appointment-filters {
+        gap: 8px;
+    }
+
+    .filter-btn,
+    .filter-active {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    
+}
+/* Pending */
+.status.pending {
+  /* background: rgba(255, 166, 0, 0.15); */
+  color: rgb(255, 68, 6);
+}
+
+/* Completed */
+.status.completed {
+  /* background: rgba(0, 128, 0, 0.15); */
+  color: green;
+}
+
+.doctors-topbar{
+    margin-top: 20px;
+}

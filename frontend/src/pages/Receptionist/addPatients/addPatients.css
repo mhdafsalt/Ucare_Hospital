@@ -1,0 +1,78 @@
+.patients-table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px;
+}
+
+.patients-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.patients-table th,
+.patients-table td {
+  padding: 14px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.patients-table th {
+  background: #f8f9fa;
+  font-weight: 600;
+}
+
+.patient-info-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.patient-avatar img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.patient-avatar-fallback {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.patients-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.patients-editBtn,
+.patients-deleteBtn,
+.patients-restoreBtn {
+  padding: 6px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.patients-editBtn {
+  background: #4cafef;
+  color: white;
+}
+
+.patients-deleteBtn {
+  background: #ff4d4f;
+  color: white;
+}
+
+.patients-restoreBtn {
+  background: #28a745;
+  color: white;
+}
