@@ -69,7 +69,7 @@ body{
 }
 
 .supportBackButton:hover{
-  background: #5bf93b;
+  background: var(--hospital-blue, #0284c7);
   color:white;
 
   transform:translateY(-2px);
@@ -251,8 +251,8 @@ body{
 
   background:linear-gradient(
     135deg,
-    #61c542,
-    #5bf93b
+    #0284c7,
+    #38bdf8
   );
 
   color:white;

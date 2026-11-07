@@ -15,11 +15,15 @@ API.interceptors.request.use((req) => {
 API.interceptors.response.use(
   (response) => response,
   (error) => {
+    // If token is invalid or expired, clear local storage without forcing an imperative page reload
     if (error.response && error.response.status === 401) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("userRole");
-      localStorage.removeItem("isLoggedIn");
-      window.location.href = "/login";
+      const isAuthRoute =
+        error.config && error.config.url && error.config.url.includes("/auth/");
+      if (!isAuthRoute) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userRole");
+        localStorage.removeItem("isLoggedIn");
+      }
     }
     return Promise.reject(error);
   }

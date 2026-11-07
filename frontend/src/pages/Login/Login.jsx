@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./login.css";
+import "./Login.css";
 import { toast } from "react-toastify";
 import { loginAPI } from "../../api/authApi";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ShieldCheck, UserCheck, Stethoscope, UserCog } from "lucide-react";
 
 function Login() {
   const [role, setRole] = useState("admin");
@@ -88,43 +88,137 @@ function Login() {
   };
 
   return (
-    <div className="auth-page">
-      <div className="auth-container">
+    <div className="vital-auth-page">
+      {/* Blueprint Grid Overlay */}
+      <div className="vital-auth-grid"></div>
 
-        {/* LEFT SIDE */}
-        <div className="auth-banner">
-          <img
-            src="./images/hospitalImage.png"
-            alt="Hospital"
-          />
-        </div>
+      {/* Ambient Radial Spotlight */}
+      <div className="vital-auth-ambient-glow"></div>
 
-        {/* RIGHT SIDE */}
-        <div className="auth-content">
+      {/* TOP FLOATING NAV */}
+      <header className="vital-auth-topbar">
+        <a href="/" className="vital-auth-logo">
+          <div className="vital-auth-logo-badge">
+            <img src="./images/favicon.png" alt="Ucare Logo" />
+          </div>
+          <div className="vital-auth-logo-text">
+            <span className="vital-auth-brand-name">Ucare</span>
+            <span className="vital-auth-brand-sub">HOSPITAL</span>
+          </div>
+        </a>
 
-          <h1 className="auth-title">Sign in</h1>
+        <a href="/" className="vital-auth-back-btn">
+          <ArrowLeft size={16} />
+          <span>Back to Home</span>
+        </a>
+      </header>
 
-          <p className="auth-subtitle">
-            To keep things easy, just log in with your work email
-            or hit that button to continue!
-          </p>
+      {/* MAIN AUTH CONTAINER */}
+      <div className="vital-auth-shell">
+        <div className="vital-auth-card">
+          {/* LEFT HERO SHOWCASE PANEL */}
+          <div className="vital-auth-showcase">
+            <div className="vital-showcase-grid-bg"></div>
+            <div className="vital-showcase-glow"></div>
 
-          {/* FORM */}
-          <form className="auth-form" onSubmit={handleLogin}>
+            <div className="vital-showcase-content">
+              <span className="vital-showcase-badge">
+                <ShieldCheck size={14} />
+                <span>SECURE MEDICAL PORTAL</span>
+              </span>
 
-            {/* USER ID */}
-            <div className="form-group">
-              <div className="password-wrapper">
+              <h2 className="vital-showcase-title">
+                Expert care for
+                <br />
+                healthy, confident
+                <br />
+                lives at every age.
+              </h2>
+
+              <p className="vital-showcase-desc">
+                Log in to your specialized clinical workspace to manage appointments,
+                patient care, doctor schedules, and digital records.
+              </p>
+
+              {/* 3D CENTERPIECE VISUAL */}
+              <div className="vital-showcase-visual">
+                <img
+                  src="./images/heart.png"
+                  alt="3D Heart Visual"
+                  className="vital-showcase-heart"
+                />
+              </div>
+
+              {/* SOCIAL PROOF CAPSULE */}
+              <div className="vital-showcase-proof">
+                <div className="vital-showcase-avatars">
+                  <img src="./images/avatar-1.jpg" alt="User 1" />
+                  <img src="./images/avatar-2.jpg" alt="User 2" />
+                  <img src="./images/avatar-3.jpg" alt="User 3" />
+                </div>
+                <span className="vital-showcase-proof-text">
+                  Your health in your hands.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT SIGN IN FORM PANEL */}
+          <div className="vital-auth-form-panel">
+            <div className="vital-form-header">
+              <h1 className="vital-form-title">Sign In</h1>
+              <p className="vital-form-subtitle">
+                Select your account role and enter your credentials to access the platform.
+              </p>
+            </div>
+
+            {/* ROLE SELECTOR TABS */}
+            <div className="vital-role-selector">
+              <button
+                type="button"
+                className={`vital-role-btn ${role === "admin" ? "active" : ""}`}
+                onClick={() => setRole("admin")}
+                disabled={loading}
+              >
+                <UserCog size={16} />
+                <span>Admin</span>
+              </button>
+
+              <button
+                type="button"
+                className={`vital-role-btn ${role === "doctor" ? "active" : ""}`}
+                onClick={() => setRole("doctor")}
+                disabled={loading}
+              >
+                <Stethoscope size={16} />
+                <span>Doctor</span>
+              </button>
+
+              <button
+                type="button"
+                className={`vital-role-btn ${role === "receptionist" ? "active" : ""}`}
+                onClick={() => setRole("receptionist")}
+                disabled={loading}
+              >
+                <UserCheck size={16} />
+                <span>Receptionist</span>
+              </button>
+            </div>
+
+            {/* SIGN IN FORM */}
+            <form className="vital-signin-form" onSubmit={handleLogin}>
+              {/* USER ID INPUT */}
+              <div className="vital-input-group">
+                <label className="vital-input-label">User ID</label>
                 <input
                   type="text"
-                  placeholder="User Id"
-                  className={`form-input ${
-                    errors.userId ? "input-error" : ""
+                  placeholder="Enter your user ID"
+                  className={`vital-form-input ${
+                    errors.userId ? "vital-input-error" : ""
                   }`}
                   value={userId}
                   onChange={(e) => {
                     setUserId(e.target.value);
-
                     setErrors({
                       ...errors,
                       userId: false,
@@ -133,72 +227,52 @@ function Login() {
                   disabled={loading}
                 />
               </div>
-            </div>
 
-            {/* EMAIL */}
-            <div className="form-group">
-              <input
-                type="email"
-                placeholder="example@gmail.com"
-                className={`form-input ${
-                  errors.email ? "input-error" : ""
-                }`}
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
+              {/* EMAIL INPUT */}
+              <div className="vital-input-group">
+                <label className="vital-input-label">Email Address</label>
+                <input
+                  type="email"
+                  placeholder="name@ucare.com"
+                  className={`vital-form-input ${
+                    errors.email ? "vital-input-error" : ""
+                  }`}
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setErrors({
+                      ...errors,
+                      email: false,
+                    });
+                  }}
+                  disabled={loading}
+                />
+              </div>
 
-                  setErrors({
-                    ...errors,
-                    email: false,
-                  });
-                }}
-                disabled={loading}
-              />
-            </div>
-
-            {/* ROLE */}
-            <div className="form-group">
-              <select
-                className="form-input"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
+              {/* SUBMIT BUTTON - VITALCARE ACCENT PILL */}
+              <button
+                type="submit"
+                className="vital-submit-pill-btn"
                 disabled={loading}
               >
-                <option value="admin">Admin</option>
-                <option value="doctor">Doctor</option>
-                <option value="receptionist">Receptionist</option>
-              </select>
+                {loading ? "Signing in..." : "Sign In to Dashboard →"}
+              </button>
+            </form>
+
+            {/* SECURITY WARNING */}
+            <div className="vital-auth-warning">
+              <AlertTriangle size={18} className="vital-warning-icon" />
+              <p>
+                For security purposes, always log out after completing your work session.
+                Authorized medical personnel only.
+              </p>
             </div>
 
-            {/* BUTTON */}
-            <button
-              type="submit"
-              className="auth-button"
-              disabled={loading}
-            >
-              {loading ? "Signing in..." : "Sign In"}
-            </button>
-          </form>
-
-          {/* WARNING */}
-          <div className="login-warning">
-            <AlertTriangle
-              size={18}
-              className="warning-icon"
-            />
-
-            <p>
-              For security purposes, always log out after
-              completing your work session. Users are required
-              to sign in again before accessing the system.
-            </p>
+            {/* FOOTER */}
+            <div className="vital-form-footer">
+              © 2026 Ucare Hospital. All rights reserved.
+            </div>
           </div>
-
-          {/* FOOTER */}
-          <p className="auth-footer">
-            © 2026 Ucare Hospital. All rights reserved.
-          </p>
-
         </div>
       </div>
     </div>

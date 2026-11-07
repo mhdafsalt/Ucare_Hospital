@@ -1,140 +1,131 @@
-// components/Sidebar.jsx
-
+import React, { useState, useEffect } from "react";
 import "./Sidebar.css";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Menu, X, LogOut, ChevronRight } from "lucide-react";
 
-function Sidebar({ menuItems }) {
-
+function Sidebar({ menuItems = [], logo = "Ucare Hospital" }) {
   const navigate = useNavigate();
-
+  const location = useLocation();
   const [mobileMenu, setMobileMenu] = useState(false);
+  const [userName, setUserName] = useState("Administrator");
+  const [userRole, setUserRole] = useState("Admin");
+  const [userEmail, setUserEmail] = useState("admin@ucare.com");
 
-  // LOGOUT
+  useEffect(() => {
+    const storedName = localStorage.getItem("userName") || localStorage.getItem("user");
+    const storedRole = localStorage.getItem("userRole");
+    if (storedName) setUserName(storedName);
+    if (storedRole) {
+      setUserRole(storedRole);
+      setUserEmail(`${storedRole.toLowerCase()}@ucare.com`);
+    }
+  }, []);
+
   const handleLogout = () => {
-
     localStorage.removeItem("user");
-
-    navigate("/");
-
+    localStorage.removeItem("token");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userName");
+    navigate("/login");
   };
 
   return (
-
     <>
-
       {/* MOBILE TOPBAR */}
-
       <div className="mobile-topbar">
-
-        <div className="mobile-logo">
-          <img src="../images/logo.png" alt="Ucare Logo" />
+        <div className="mobile-brand" onClick={() => navigate("/")}>
+          <div className="sidebar-logo-symbol" style={{ width: 34, height: 34 }}>
+            <img src="./images/favicon.png" alt="Ucare Logo" />
+          </div>
+          <div className="brand-text-col">
+            <span className="mobile-brand-name">Ucare</span>
+            <span className="brand-subtitle">ADMIN</span>
+          </div>
         </div>
 
         <button
           className="menu-toggle"
           onClick={() => setMobileMenu(!mobileMenu)}
+          aria-label="Toggle navigation"
         >
-
-          {mobileMenu ? <X /> : <Menu />}
-
+          {mobileMenu ? <X size={22} /> : <Menu size={22} />}
         </button>
-
       </div>
 
-      {/* SIDEBAR */}
+      {/* MOBILE OVERLAY */}
+      {mobileMenu && (
+        <div
+          className="sidebar-overlay"
+          onClick={() => setMobileMenu(false)}
+        />
+      )}
 
-      <aside className={`sidebar ${mobileMenu ? "show-sidebar" : ""}`}>
-
-        <div>
-
-          {/* DESKTOP LOGO */}
-
-          <div className="logo-boxx">
-            <img src="../images/logo.png" alt="Ucare Logo" />
+      {/* SIDEBAR WRAPPER (SPARK ADMIN STYLE) */}
+      <aside className={`sidebar-wrapper ${mobileMenu ? "show-sidebar" : ""}`}>
+        {/* BRAND LOGO / IDENTITY */}
+        <div className="sidebar-brand-box" onClick={() => navigate("/")}>
+          <div className="sidebar-brand">
+            <div className="sidebar-logo-symbol">
+              <img src="./images/favicon.png" alt="Ucare Logo" />
+            </div>
+            <div className="brand-text-col">
+              <span className="brand-title">Ucare</span>
+              <span className="brand-subtitle">HOSPITAL ADMIN</span>
+            </div>
           </div>
-
-          {/* MENU */}
-
-          <div className="sidebar-sections">
-
-            {menuItems.map((section, index) => (
-
-              <div
-                key={index}
-                className="sidebar-section"
-              >
-
-                <p className="section-title">
-                  {section.title}
-                </p>
-
-                <div className="menu-list">
-
-                  {section.items.map((item, i) => (
-
-                    <button
-                      key={i}
-                      className={`menu-item ${item.active ? "active" : ""}`}
-                      onClick={() => {
-                        navigate(item.path);
-                        setMobileMenu(false);
-                      }}
-                    >
-
-                      {item.icon}
-
-                      <span>{item.name}</span>
-
-                    </button>
-
-                  ))}
-
-                </div>
-
-              </div>
-
-            ))}
-
-          </div>
-
         </div>
 
-        {/* SEARCH */}
-
-        <div className="search-section">
-
-          <p className="section-title">
-            Search
-          </p>
-
-          <div className="search-box">
-
-            <input
-              type="text"
-              placeholder="Search"
-            />
-
-            <span>⌕</span>
-
-          </div>
-
-          {/* LOGOUT */}
-
-          <button
-            className="logout-btn"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
-
+        {/* NAVIGATION MENU */}
+        <div className="sidebar-menu-scroll">
+          {menuItems.map((section, idx) => (
+            <div key={idx} className="sidebar-menu-section">
+              <div className="sidebar-menu-title">{section.title}</div>
+              <ul className="sidebar-menu-list">
+                {section.items.map((item, i) => {
+                  const isActive = item.active || (item.path && location.pathname === item.path);
+                  return (
+                    <li key={i} className="sidebar-menu-item">
+                      <button
+                        className={`sidebar-menu-link ${isActive ? "active" : ""}`}
+                        onClick={() => {
+                          if (item.path) navigate(item.path);
+                          setMobileMenu(false);
+                        }}
+                      >
+                        <span className="menu-icon">{item.icon}</span>
+                        <span className="menu-label">{item.name}</span>
+                        {isActive && <span className="active-dot" />}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
         </div>
 
+        {/* SIDEBAR PROFILE CARD (FOOTER) */}
+        <div className="sidebar-profile-wrapper">
+          <div className="sidebar-profile">
+            <div className="sidebar-profile-avatar">
+              <span>{userName?.charAt(0).toUpperCase()}</span>
+            </div>
+            <div className="sidebar-profile-info">
+              <div className="sidebar-profile-name">{userName}</div>
+              <div className="sidebar-profile-email">{userEmail}</div>
+            </div>
+            <button
+              className="sidebar-logout-btn"
+              onClick={handleLogout}
+              title="Logout"
+              aria-label="Logout"
+            >
+              <LogOut size={16} />
+            </button>
+          </div>
+        </div>
       </aside>
-
     </>
-
   );
 }
 
