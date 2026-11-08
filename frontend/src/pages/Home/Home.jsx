@@ -98,7 +98,7 @@ function Home() {
           onOpenAuth={() => setActiveAuth("navbar")}
         />
 
-        <section className="vital-hero">
+        <section className={`vital-hero ${activeAuth ? "has-active-auth" : ""}`}>
           {/* Subtle Grid Pattern Overlay */}
           <div className="vital-hero-grid"></div>
 
