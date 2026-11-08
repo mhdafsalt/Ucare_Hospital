@@ -20,7 +20,13 @@ exports.getPharmacists = async (req, res) => {
 // ADD PHARMACIST
 exports.addPharmacist = async (req, res) => {
   try {
-    const pharmacist = await Pharmacist.create(req.body);
+    const payload = { ...req.body };
+    const uid = payload.userId || payload.pharmacistId || `PH${Date.now()}`;
+    payload.userId = uid;
+    payload.pharmacistId = payload.pharmacistId || uid;
+    payload.role = "pharmacist";
+
+    const pharmacist = await Pharmacist.create(payload);
 
     // Log Activity
     await Activity.create({
@@ -43,7 +49,12 @@ exports.addPharmacist = async (req, res) => {
 // UPDATE PHARMACIST
 exports.updatePharmacist = async (req, res) => {
   try {
-    const pharmacist = await Pharmacist.findByIdAndUpdate(req.params.id, req.body, {
+    const payload = { ...req.body };
+    if (payload.pharmacistId && !payload.userId) {
+      payload.userId = payload.pharmacistId;
+    }
+
+    const pharmacist = await Pharmacist.findByIdAndUpdate(req.params.id, payload, {
       new: true,
     });
 

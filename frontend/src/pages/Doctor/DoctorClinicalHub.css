@@ -83,21 +83,50 @@
 }
 
 .btn-open-chart {
-  padding: 5px 12px;
-  border-radius: 6px;
-  background: #f1f5f9;
-  color: #0f172a;
-  border: 1px solid #cbd5e1;
-  font-size: 12px;
-  font-weight: 600;
+  padding: 7px 16px;
+  border-radius: 10px;
+  background: #0ea5e9;
+  color: #ffffff !important;
+  border: none;
+  font-size: 12.5px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.15s ease;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+  transition: all 0.2s ease;
 }
 
 .btn-open-chart:hover {
   background: #0284c7;
-  color: #ffffff;
-  border-color: #0284c7;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
+}
+
+.btn-quick-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 12px;
+  background: #0ea5e9;
+  color: #ffffff !important;
+  font-size: 13.5px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-quick-action:hover {
+  background: #0284c7;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.45);
+}
+
+.btn-quick-action:active {
+  transform: translateY(0);
 }
 
 .icd-badge {

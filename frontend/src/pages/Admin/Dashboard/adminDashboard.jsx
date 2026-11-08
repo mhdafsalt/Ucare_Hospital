@@ -526,7 +526,12 @@ function AdminDashboard() {
           </div>
 
           {/* 3. Total Pharmacists */}
-          <div className="overview-summary-card">
+          <div
+            className="overview-summary-card"
+            onClick={() => navigate("/pharmacy/dashboard")}
+            style={{ cursor: "pointer" }}
+            title="Open Pharmacy Management"
+          >
             <div className="card-top-line">
               <span className="card-kicker">Pharmacy</span>
               <div className="card-kicker-icon kicker-emerald">
@@ -810,7 +815,7 @@ function AdminDashboard() {
             </div>
             <button
               className="btn-view-all"
-              onClick={() => navigate("/admin/pharmacy")}
+              onClick={() => navigate("/pharmacy/dashboard")}
               title="Navigate to complete Pharmacy Management module"
             >
               <span>View All Pharmacy</span>

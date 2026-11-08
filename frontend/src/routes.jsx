@@ -19,7 +19,8 @@ import ListSupport from "./pages/Support/ListSupport/ListSupport";
 
 function ProtectedRoute({ children, role }) {
   const token = localStorage.getItem("token");
-  const userRole = localStorage.getItem("userRole");
+  const rawRole = localStorage.getItem("userRole") || "";
+  const userRole = rawRole.toLowerCase().trim();
 
   if (!token) {
     return <Navigate to="/login" replace />;
@@ -31,11 +32,27 @@ function ProtectedRoute({ children, role }) {
   }
 
   if (role) {
-    if (Array.isArray(role)) {
-      if (!role.includes(userRole)) {
-        return <Navigate to="/" replace />;
-      }
-    } else if (userRole !== role) {
+    const allowed = (Array.isArray(role) ? role : [role]).map((r) =>
+      r.toLowerCase().trim()
+    );
+
+    // Normalize pharmacy <=> pharmacist
+    if (
+      (userRole === "pharmacist" || userRole === "pharmacy") &&
+      (allowed.includes("pharmacist") || allowed.includes("pharmacy"))
+    ) {
+      return children;
+    }
+
+    // Normalize billing <=> billingstaff
+    if (
+      (userRole === "billing" || userRole === "billingstaff") &&
+      (allowed.includes("billing") || allowed.includes("billingstaff"))
+    ) {
+      return children;
+    }
+
+    if (!allowed.includes(userRole)) {
       return <Navigate to="/" replace />;
     }
   }
@@ -111,11 +128,7 @@ function AppRoutes() {
       />
       <Route
         path="/admin/pharmacy"
-        element={
-          <ProtectedRoute role="admin">
-            <PharmacyPanel />
-          </ProtectedRoute>
-        }
+        element={<Navigate to="/pharmacy/dashboard" replace />}
       />
       <Route
         path="/admin/billing"
@@ -271,19 +284,11 @@ function AppRoutes() {
       />
       <Route
         path="/receptionist/billing"
-        element={
-          <ProtectedRoute role="receptionist">
-            <ReceptionistHub />
-          </ProtectedRoute>
-        }
+        element={<Navigate to="/receptionist/dashboard" replace />}
       />
       <Route
         path="/receptionist/payments"
-        element={
-          <ProtectedRoute role="receptionist">
-            <ReceptionistHub />
-          </ProtectedRoute>
-        }
+        element={<Navigate to="/receptionist/dashboard" replace />}
       />
 
       {/* ===================================================================
@@ -292,7 +297,7 @@ function AppRoutes() {
       <Route
         path="/pharmacy/dashboard"
         element={
-          <ProtectedRoute role={["pharmacy", "admin"]}>
+          <ProtectedRoute role={["pharmacy", "pharmacist", "admin"]}>
             <PharmacyPanel />
           </ProtectedRoute>
         }
@@ -300,7 +305,7 @@ function AppRoutes() {
       <Route
         path="/pharmacy/inventory"
         element={
-          <ProtectedRoute role={["pharmacy", "admin"]}>
+          <ProtectedRoute role={["pharmacy", "pharmacist", "admin"]}>
             <PharmacyPanel />
           </ProtectedRoute>
         }
@@ -308,7 +313,7 @@ function AppRoutes() {
       <Route
         path="/pharmacy/add-medicine"
         element={
-          <ProtectedRoute role={["pharmacy", "admin"]}>
+          <ProtectedRoute role={["pharmacy", "pharmacist", "admin"]}>
             <PharmacyPanel />
           </ProtectedRoute>
         }
@@ -316,7 +321,7 @@ function AppRoutes() {
       <Route
         path="/pharmacy/stock"
         element={
-          <ProtectedRoute role={["pharmacy", "admin"]}>
+          <ProtectedRoute role={["pharmacy", "pharmacist", "admin"]}>
             <PharmacyPanel />
           </ProtectedRoute>
         }
@@ -324,7 +329,7 @@ function AppRoutes() {
       <Route
         path="/pharmacy/expiry"
         element={
-          <ProtectedRoute role={["pharmacy", "admin"]}>
+          <ProtectedRoute role={["pharmacy", "pharmacist", "admin"]}>
             <PharmacyPanel />
           </ProtectedRoute>
         }
@@ -332,7 +337,7 @@ function AppRoutes() {
       <Route
         path="/pharmacy/sales"
         element={
-          <ProtectedRoute role={["pharmacy", "admin"]}>
+          <ProtectedRoute role={["pharmacy", "pharmacist", "admin"]}>
             <PharmacyPanel />
           </ProtectedRoute>
         }
@@ -340,7 +345,7 @@ function AppRoutes() {
       <Route
         path="/pharmacy/sales-history"
         element={
-          <ProtectedRoute role={["pharmacy", "admin"]}>
+          <ProtectedRoute role={["pharmacy", "pharmacist", "admin"]}>
             <PharmacyPanel />
           </ProtectedRoute>
         }
@@ -352,7 +357,7 @@ function AppRoutes() {
       <Route
         path="/billing/dashboard"
         element={
-          <ProtectedRoute role={["billing", "admin"]}>
+          <ProtectedRoute role={["billing", "billingstaff", "admin"]}>
             <BillingPanel />
           </ProtectedRoute>
         }
@@ -360,7 +365,7 @@ function AppRoutes() {
       <Route
         path="/billing/invoices"
         element={
-          <ProtectedRoute role={["billing", "admin"]}>
+          <ProtectedRoute role={["billing", "billingstaff", "admin"]}>
             <BillingPanel />
           </ProtectedRoute>
         }
@@ -368,7 +373,7 @@ function AppRoutes() {
       <Route
         path="/billing/payments"
         element={
-          <ProtectedRoute role={["billing", "admin"]}>
+          <ProtectedRoute role={["billing", "billingstaff", "admin"]}>
             <BillingPanel />
           </ProtectedRoute>
         }
@@ -376,7 +381,7 @@ function AppRoutes() {
       <Route
         path="/billing/pending"
         element={
-          <ProtectedRoute role={["billing", "admin"]}>
+          <ProtectedRoute role={["billing", "billingstaff", "admin"]}>
             <BillingPanel />
           </ProtectedRoute>
         }
@@ -384,7 +389,7 @@ function AppRoutes() {
       <Route
         path="/billing/history"
         element={
-          <ProtectedRoute role={["billing", "admin"]}>
+          <ProtectedRoute role={["billing", "billingstaff", "admin"]}>
             <BillingPanel />
           </ProtectedRoute>
         }
@@ -392,11 +397,25 @@ function AppRoutes() {
       <Route
         path="/billing/reports"
         element={
-          <ProtectedRoute role={["billing", "admin"]}>
+          <ProtectedRoute role={["billing", "billingstaff", "admin"]}>
             <BillingPanel />
           </ProtectedRoute>
         }
       />
+
+      {/* ===================================================================
+          6. SEAMLESS ALIAS & SHORTCUT ROUTES
+          =================================================================== */}
+      <Route path="/pharmacy" element={<Navigate to="/pharmacy/dashboard" replace />} />
+      <Route path="/pharmacist" element={<Navigate to="/pharmacy/dashboard" replace />} />
+      <Route path="/pharmacist/dashboard" element={<Navigate to="/pharmacy/dashboard" replace />} />
+      <Route path="/pharmacist/*" element={<Navigate to="/pharmacy/dashboard" replace />} />
+      <Route path="/billing" element={<Navigate to="/billing/dashboard" replace />} />
+      <Route path="/billingstaff" element={<Navigate to="/billing/dashboard" replace />} />
+      <Route path="/billingstaff/dashboard" element={<Navigate to="/billing/dashboard" replace />} />
+      <Route path="/doctor" element={<Navigate to="/doctor/dashboard" replace />} />
+      <Route path="/receptionist" element={<Navigate to="/receptionist/dashboard" replace />} />
+      <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
 
       {/* SUPPORT & FALLBACK ROUTES */}
       <Route path="/support" element={<AddSupport />} />

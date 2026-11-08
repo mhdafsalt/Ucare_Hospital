@@ -568,3 +568,36 @@ input, select, textarea {
   box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(15, 23, 42, 0.08) !important;
 }
 
+/* Modern Hospital Sky Blue Action Button (Matching + Add Doctor spec) */
+.btn-modern-sky,
+button.btn-modern-sky {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 22px;
+  border-radius: 12px;
+  background: #0ea5e9 !important;
+  color: #ffffff !important;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-modern-sky:hover,
+button.btn-modern-sky:hover {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.45);
+}
+
+.btn-modern-sky:active,
+button.btn-modern-sky:active {
+  transform: translateY(0);
+}
+

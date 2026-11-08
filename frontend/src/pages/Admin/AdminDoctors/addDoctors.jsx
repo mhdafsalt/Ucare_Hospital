@@ -144,11 +144,16 @@ function AddDoctors() {
     if (!validateForm()) return;
 
     try {
+      const payload = {
+        ...formData,
+        userId: formData.doctorId,
+        role: "doctor",
+      };
       if (editingId) {
-        await updateDoctorAPI(editingId, formData);
+        await updateDoctorAPI(editingId, payload);
         toast.success("Doctor updated successfully");
       } else {
-        await addDoctorAPI(formData);
+        await addDoctorAPI(payload);
         toast.success("Doctor registered successfully");
       }
       setShowForm(false);

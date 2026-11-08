@@ -10,6 +10,14 @@ const connectDB = async () => {
     const conn = await mongoose.connect(process.env.MONGO_URI);
 
     console.log(` MongoDB Connected Successfully to ${conn.connection.host}/${conn.connection.name}`);
+
+    // Synchronize all staff into the single unified "users" collection
+    try {
+      const syncCollectionsToSingleUsers = require("./migrateUsers");
+      await syncCollectionsToSingleUsers();
+    } catch (syncErr) {
+      console.warn(" Single Collection Sync Note:", syncErr.message);
+    }
   } catch (error) {
     console.error(" MongoDB Connection Error:", error.message);
 

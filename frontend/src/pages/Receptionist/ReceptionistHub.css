@@ -15,6 +15,33 @@
   border: 1px solid #e2e8f0;
 }
 
+.btn-quick-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 12px;
+  background: #0ea5e9;
+  color: #ffffff !important;
+  font-size: 13.5px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-quick-action:hover {
+  background: #0284c7;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.45);
+}
+
+.btn-quick-action:active {
+  transform: translateY(0);
+}
+
 .quick-reception-buttons {
   display: flex;
   gap: 8px;
@@ -22,20 +49,26 @@
 }
 
 .btn-reception-link {
-  padding: 6px 12px;
-  border-radius: 6px;
-  background: #0f172a;
-  color: #bef264;
-  font-size: 11.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: #0ea5e9;
+  color: #ffffff !important;
+  font-size: 12.5px;
   font-weight: 700;
   border: none;
   cursor: pointer;
-  transition: all 0.15s ease;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+  transition: all 0.2s ease;
 }
 
 .btn-reception-link:hover {
-  background: #1e293b;
+  background: #0284c7;
+  color: #ffffff !important;
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
 }
 
 .reception-table-card {
@@ -86,24 +119,28 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 6px 14px;
-  border-radius: 6px;
-  background: #0284c7;
-  color: #ffffff;
+  padding: 7px 16px;
+  border-radius: 10px;
+  background: #0ea5e9;
+  color: #ffffff !important;
   border: none;
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
   transition: all 0.15s ease;
 }
 
-.btn-checkin-action.is-checked {
-  background: #dcfce7;
-  color: #15803d;
+.btn-checkin-action:hover {
+  background: #0284c7;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
 }
 
-.btn-checkin-action:hover {
-  transform: translateY(-1px);
+.btn-checkin-action.is-checked {
+  background: #10b981;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 }
 
 .doctor-schedule-grid {

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../../components/Sidebar/Sidebar";
+import { motion, AnimatePresence } from "framer-motion";
 import "./Appointments.css";
+import "../../Admin/AdminPharmacist/AddPharmacist.css";
 import { toast } from "react-toastify";
 
 import {
@@ -14,6 +16,9 @@ import {
     Pencil,
     Trash2,
     X,
+    Calendar,
+    Clock,
+    Stethoscope,
 } from "lucide-react";
 
 
@@ -25,7 +30,7 @@ import {
     updateAppointmentAPI,
     restoreAppointmentAPI,
 } from "../../../api/appointmentsApi";
-import { FaCalendarCheck, FaClipboardList, FaFilter, FaMoneyBillWave, FaSearch, FaUsers, FaUserTie } from "react-icons/fa";
+import { FaCalendarCheck, FaClipboardList, FaFilter, FaSearch, FaUsers, FaUserTie } from "react-icons/fa";
 import { receptionistMenu } from "../../../config/panelMenus";
 
 function Appointments() {
@@ -168,7 +173,6 @@ function Appointments() {
     const [stats, setStats] = useState({
         patients: "",
         appointments: "",
-        billing: "",
         receptionists: ""
     });
 
@@ -188,7 +192,6 @@ function Appointments() {
                 setStats({
                     patients: patientsRes.data?.data?.length || patientsRes.data?.length || 0,
                     appointments: todayAppointments,
-                    billing: 0,
                     receptionists: receptionistsRes.data?.data?.length || receptionistsRes.data?.length || 0
                 });
             } catch (error) {
@@ -279,7 +282,7 @@ function Appointments() {
                             </h2>
 
                             <p className="dashboard-page-subtitle">
-                                Monitor appointments, patient flow and billing.
+                                Monitor appointments and patient consultation schedules.
                             </p>
                         </div>
 
@@ -315,17 +318,6 @@ function Appointments() {
 
                             <div className="stats-icon">
                                 <FaCalendarCheck />
-                            </div>
-                        </div>
-
-                        <div className="stats-card">
-                            <div>
-                                <p>Billing Completed</p>
-                                <h2>{stats.billing}</h2>
-                            </div>
-
-                            <div className="stats-icon">
-                                <FaMoneyBillWave />
                             </div>
                         </div>
 
@@ -385,119 +377,166 @@ function Appointments() {
                         ))}
                     </div>
 
-                    {/* FORM */}
-                    {showForm && (
-                        <div className="doctors-sideForm">
-
-                            {/* HEADER */}
-                            <div className="doctors-modalHeader">
-
-                                <h2>
-                                    {editingId ? "Update Appointment" : "Add Appointment"}
-                                </h2>
-
-                                <button
-                                    onClick={() => setShowForm(false)}
-                                    className="doctors-closeBtn"
+                    {/* MODAL POPUP FOR ADD / EDIT APPOINTMENT */}
+                    <AnimatePresence>
+                        {showForm && (
+                            <div className="staff-modal-backdrop" onClick={() => setShowForm(false)}>
+                                <motion.div
+                                    className="staff-modal-box"
+                                    onClick={(e) => e.stopPropagation()}
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
                                 >
-                                    <X />
-                                </button>
+                                    {/* HEADER */}
+                                    <div className="staff-modal-header">
+                                        <div>
+                                            <h3>{editingId ? "Update Appointment" : "Add Appointment"}</h3>
+                                            <p>{editingId ? "Modify consultation schedule or update status" : "Schedule a new patient consultation with a doctor"}</p>
+                                        </div>
+                                        <button onClick={() => setShowForm(false)} className="close-btn">
+                                            <X size={18} />
+                                        </button>
+                                    </div>
 
-                            </div>
-
-                            {/* FORM */}
-                            <form
-                                onSubmit={
-                                    editingId
-                                        ? handleUpdateAppointment
-                                        : handleAddAppointment
-                                }
-                                className="doctors-form"
-                            >
-
-                                {/* PATIENT NAME */}
-                                <input
-                                    name="patientName"
-                                    placeholder="Patient Name"
-                                    onChange={handleChange}
-                                    value={formData.patientName}
-                                />
-
-                                {/* DOCTOR NAME */}
-                                <input
-                                    name="doctorName"
-                                    placeholder="Doctor Name"
-                                    onChange={handleChange}
-                                    value={formData.doctorName}
-                                />
-
-                                {/* DATE */}
-                                <input
-                                    type="date"
-                                    name="date"
-                                    onChange={handleChange}
-                                    value={formData.date}
-                                />
-
-                                {/* TIME */}
-                                <input
-                                    type="time"
-                                    name="time"
-                                    onChange={handleChange}
-                                    value={formData.time}
-                                />
-
-                                {/* STATUS */}
-                                <select
-                                    name="status"
-                                    onChange={handleChange}
-                                    value={formData.status}
-                                >
-                                    <option value="">Select Status</option>
-                                    <option value="Scheduled">Scheduled</option>
-                                    <option value="Pending">Pending</option>
-                                    {/* <option value="Completed">Completed</option> */}
-                                </select>
-
-                                {/* NOTES */}
-                                <textarea
-                                    name="notes"
-                                    placeholder="Notes (optional)"
-                                    onChange={handleChange}
-                                    value={formData.notes}
-                                />
-
-                                {/* SUBMIT */}
-                                <div className="doctors-form-actions">
-
-                                    <button
-                                        type="submit"
-                                        className="doctors-submitBtn"
+                                    {/* FORM */}
+                                    <form
+                                        onSubmit={
+                                            editingId
+                                                ? handleUpdateAppointment
+                                                : handleAddAppointment
+                                        }
+                                        className="staff-form-grid"
                                     >
-                                        {editingId
-                                            ? "Update Appointment"
-                                            : "Save Appointment"}
-                                    </button>
+                                        <div className="form-group">
+                                            <label>Patient Name *</label>
+                                            <input
+                                                name="patientName"
+                                                placeholder="e.g. John Doe"
+                                                onChange={handleChange}
+                                                value={formData.patientName}
+                                                required
+                                            />
+                                        </div>
 
-                                </div>
+                                        <div className="form-group">
+                                            <label>Doctor Name *</label>
+                                            <input
+                                                name="doctorName"
+                                                placeholder="e.g. Dr. Sarah Jenkins"
+                                                onChange={handleChange}
+                                                value={formData.doctorName}
+                                                required
+                                            />
+                                        </div>
 
-                            </form>
+                                        <div className="form-group">
+                                            <label>Appointment Date *</label>
+                                            <input
+                                                type="date"
+                                                name="date"
+                                                onChange={handleChange}
+                                                value={formData.date}
+                                                required
+                                            />
+                                        </div>
 
-                        </div>
-                    )}
+                                        <div className="form-group">
+                                            <label>Appointment Time *</label>
+                                            <input
+                                                type="time"
+                                                name="time"
+                                                onChange={handleChange}
+                                                value={formData.time}
+                                                required
+                                            />
+                                        </div>
 
-                    {/* TABLE */}
+                                        <div className="form-group full-width">
+                                            <label>Status</label>
+                                            <select
+                                                name="status"
+                                                onChange={handleChange}
+                                                value={formData.status}
+                                            >
+                                                <option value="Scheduled">Scheduled</option>
+                                                <option value="Pending">Pending</option>
+                                                <option value="Completed">Completed</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="form-group full-width">
+                                            <label>Notes (optional)</label>
+                                            <textarea
+                                                name="notes"
+                                                placeholder="Additional symptoms or consultation remarks..."
+                                                onChange={handleChange}
+                                                value={formData.notes}
+                                                rows={3}
+                                            />
+                                        </div>
+
+                                        <div className="form-actions-row full-width">
+                                            <button
+                                                type="button"
+                                                className="btn-secondary"
+                                                onClick={() => setShowForm(false)}
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                className="btn-submit"
+                                            >
+                                                {editingId
+                                                    ? "Update Appointment"
+                                                    : "Save Appointment"}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </motion.div>
+                            </div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* TABLE CONTAINER */}
                     <div className="patients-table-container">
 
-                        {loading && <p>Loading...</p>}
-
-                        {!loading && filteredAppointments.length === 0 && (
-                            <p>No appointments found</p>
+                        {/* LOADING */}
+                        {loading && (
+                            <div className="patients-loading">
+                                <div className="table-spinner"></div>
+                                <p>Loading appointments...</p>
+                            </div>
                         )}
 
+                        {/* EMPTY STATE */}
+                        {!loading && filteredAppointments.length === 0 && (
+                            <div className="empty-state-card">
+                                <div className="empty-icon-box">
+                                    <CalendarCheck size={36} />
+                                </div>
+                                <h4>{showDeleted ? "Trash is Empty" : "No Appointments Found"}</h4>
+                                <p>
+                                    {showDeleted
+                                        ? "There are no deleted appointments in the trash bin."
+                                        : filter !== "All"
+                                        ? `No appointments found matching status "${filter}".`
+                                        : search
+                                        ? `No appointments matching "${search}" were found.`
+                                        : "There are currently no scheduled appointments recorded."}
+                                </p>
+                                {!showDeleted && (
+                                    <button onClick={openAddForm} className="empty-action-btn">
+                                        <Plus size={16} /> Book New Appointment
+                                    </button>
+                                )}
+                            </div>
+                        )}
+
+                        {/* TABLE */}
                         {!loading && filteredAppointments.length > 0 && (
                             <table className="patients-table">
-
                                 <thead>
                                     <tr>
                                         <th>Patient</th>
@@ -505,19 +544,16 @@ function Appointments() {
                                         <th>Date</th>
                                         <th>Time</th>
                                         <th>Status</th>
-                                        <th>Actions</th>
+                                        <th style={{ textAlign: "right" }}>Actions</th>
                                     </tr>
                                 </thead>
 
                                 <tbody>
                                     {filteredAppointments.map((a) => (
                                         <tr key={a._id}>
-
-                                            {/* PATIENT INFO (LIKE PATIENT UI) */}
+                                            {/* PATIENT INFO */}
                                             <td className="patient-info-cell">
-
                                                 <div className="patient-avatar">
-
                                                     {a.patientImage ? (
                                                         <img
                                                             src={a.patientImage}
@@ -533,23 +569,43 @@ function Appointments() {
                                                             {a.patientName?.charAt(0)}
                                                         </div>
                                                     )}
-
                                                 </div>
 
-                                                <div className="patient-name">
-                                                    {a.patientName}
+                                                <div>
+                                                    <div className="patient-name">
+                                                        {a.patientName}
+                                                    </div>
+                                                    {a.notes && (
+                                                        <span style={{ fontSize: "11.5px", color: "#64748b", maxWidth: "200px", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={a.notes}>
+                                                            {a.notes}
+                                                        </span>
+                                                    )}
                                                 </div>
-
                                             </td>
 
                                             {/* DOCTOR */}
-                                            <td>{a.doctorName}</td>
+                                            <td>
+                                                <span className="badge-doctor">
+                                                    <Stethoscope size={13} />
+                                                    {a.doctorName}
+                                                </span>
+                                            </td>
 
                                             {/* DATE */}
-                                            <td>{a.date?.split("T")[0]}</td>
+                                            <td>
+                                                <span className="badge-date">
+                                                    <Calendar size={13} style={{ color: "#0284c7" }} />
+                                                    {a.date?.split("T")[0]}
+                                                </span>
+                                            </td>
 
                                             {/* TIME */}
-                                            <td>{a.time}</td>
+                                            <td>
+                                                <span className="badge-time">
+                                                    <Clock size={13} style={{ color: "#0284c7" }} />
+                                                    {a.time}
+                                                </span>
+                                            </td>
 
                                             {/* STATUS */}
                                             <td>
@@ -559,8 +615,7 @@ function Appointments() {
                                             </td>
 
                                             {/* ACTIONS */}
-                                            <td>
-
+                                            <td style={{ textAlign: "right" }}>
                                                 {showDeleted ? (
                                                     <button
                                                         onClick={() => handleRestore(a._id)}
@@ -569,31 +624,28 @@ function Appointments() {
                                                         Restore
                                                     </button>
                                                 ) : (
-                                                    <div className="patients-actions">
-
+                                                    <div className="patients-actions" style={{ justifyContent: "flex-end" }}>
                                                         <button
                                                             onClick={() => handleEdit(a)}
                                                             className="patients-editBtn"
+                                                            title="Edit Appointment"
                                                         >
-                                                            <Pencil size={16} />
+                                                            <Pencil size={15} />
                                                         </button>
 
                                                         <button
                                                             onClick={() => handleDelete(a._id)}
                                                             className="patients-deleteBtn"
+                                                            title="Delete Appointment"
                                                         >
-                                                            <Trash2 size={16} />
+                                                            <Trash2 size={15} />
                                                         </button>
-
                                                     </div>
                                                 )}
-
                                             </td>
-
                                         </tr>
                                     ))}
                                 </tbody>
-
                             </table>
                         )}
 

@@ -139,11 +139,16 @@ function AddReceptionist() {
     if (!validateForm()) return;
 
     try {
+      const payload = {
+        ...formData,
+        userId: formData.receptionistId,
+        role: "receptionist",
+      };
       if (editingId) {
-        await updateReceptionistAPI(editingId, formData);
+        await updateReceptionistAPI(editingId, payload);
         toast.success("Receptionist updated successfully");
       } else {
-        await addReceptionistAPI(formData);
+        await addReceptionistAPI(payload);
         toast.success("Receptionist registered successfully");
       }
       setShowForm(false);

@@ -9,8 +9,6 @@ import {
   CalendarCheck,
   CheckCircle2,
   Clock,
-  Receipt,
-  CreditCard,
   Search,
   Plus,
   Check,
@@ -93,8 +91,6 @@ export default function ReceptionistHub() {
     const path = location.pathname;
     if (path.includes("check-in")) return "check-in";
     if (path.includes("doctor-availability")) return "doctor-availability";
-    if (path.includes("billing")) return "billing";
-    if (path.includes("payments")) return "payments";
     if (path.includes("patients-list")) return "patients-list";
     return "dashboard";
   };
@@ -148,8 +144,6 @@ export default function ReceptionistHub() {
             <h1 className="page-title">
               {activeTab === "check-in" && "Patient Arrival & Check-In Desk"}
               {activeTab === "doctor-availability" && "Doctor Schedule & Availability"}
-              {activeTab === "billing" && "Front Desk Billing Assistance"}
-              {activeTab === "payments" && "Counter Payments & Receipts"}
               {activeTab === "patients-list" && "Registered Patient Directory"}
               {activeTab === "dashboard" && "Reception Desk Dashboard"}
             </h1>
@@ -310,25 +304,6 @@ export default function ReceptionistHub() {
                 </div>
               ))}
             </div>
-          </div>
-        )}
-
-        {/* BILLING ASSISTANCE OR PAYMENTS VIEW */}
-        {(activeTab === "billing" || activeTab === "payments") && (
-          <div className="card reception-table-card">
-            <div className="card-header">
-              <h2 className="card-title">Front Desk Billing & Patient Payment Assistance</h2>
-              <button
-                className="btn-quick-action"
-                onClick={() => navigate("/billing/dashboard")}
-              >
-                Open Full Billing Panel
-              </button>
-            </div>
-            <p className="reception-notice">
-              Front-desk receptionist payment collection terminal is synced with
-              the central Billing & Accounts ledger.
-            </p>
           </div>
         )}
       </main>

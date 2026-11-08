@@ -3,7 +3,19 @@ const Receptionist = require("../models/Receptionist");
 // ================= CREATE =================
 exports.addReceptionist = async (req, res) => {
   try {
-    const receptionist = await Receptionist.create(req.body);
+    const payload = { ...req.body };
+    const uid = payload.userId || payload.receptionistId || `REC${Date.now()}`;
+    payload.userId = uid;
+    payload.receptionistId = payload.receptionistId || uid;
+    if (payload.receptionistimage && !payload.image) {
+      payload.image = payload.receptionistimage;
+    }
+    if (payload.image && !payload.receptionistimage) {
+      payload.receptionistimage = payload.image;
+    }
+    payload.role = "receptionist";
+
+    const receptionist = await Receptionist.create(payload);
 
     res.status(201).json({
       success: true,
@@ -44,9 +56,20 @@ exports.getReceptionists = async (req, res) => {
 // ================= UPDATE =================
 exports.updateReceptionist = async (req, res) => {
   try {
+    const payload = { ...req.body };
+    if (payload.receptionistId && !payload.userId) {
+      payload.userId = payload.receptionistId;
+    }
+    if (payload.receptionistimage && !payload.image) {
+      payload.image = payload.receptionistimage;
+    }
+    if (payload.image && !payload.receptionistimage) {
+      payload.receptionistimage = payload.image;
+    }
+
     const updated = await Receptionist.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      payload,
       { new: true }
     );
 

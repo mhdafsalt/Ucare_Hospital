@@ -124,11 +124,16 @@ function AddBillingStaff() {
     if (!validateForm()) return;
 
     try {
+      const payload = {
+        ...formData,
+        userId: formData.staffId,
+        role: "billing",
+      };
       if (editingId) {
-        await updateBillingStaffAPI(editingId, formData);
+        await updateBillingStaffAPI(editingId, payload);
         toast.success("Billing staff updated successfully");
       } else {
-        await addBillingStaffAPI(formData);
+        await addBillingStaffAPI(payload);
         toast.success("Billing officer registered with credentials");
       }
       setShowForm(false);

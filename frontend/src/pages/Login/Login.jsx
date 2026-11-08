@@ -3,10 +3,9 @@ import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import { toast } from "react-toastify";
 import { loginAPI } from "../../api/authApi";
-import { AlertTriangle, ArrowLeft, ShieldCheck, UserCheck, Stethoscope, UserCog } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ShieldCheck } from "lucide-react";
 
 function Login() {
-  const [role, setRole] = useState("admin");
   const [userId, setUserId] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,60 +23,62 @@ function Login() {
 
     // VALIDATION
     const newErrors = {
-      userId: !userId.trim(),
-      email: !email.trim(),
+      userId: !userId.trim() && !email.trim(),
+      email: !email.trim() && !userId.trim(),
     };
 
     setErrors(newErrors);
 
-    if (newErrors.userId || newErrors.email) {
-      toast.error("Please enter both User ID and Email.");
+    if (!userId.trim() && !email.trim()) {
+      toast.error("Please enter your User ID or Email.");
       return;
     }
 
     try {
       setLoading(true);
 
-      const res = await loginAPI({ role, userId, email });
+      const res = await loginAPI({ userId: userId.trim(), email: email.trim() });
 
       if (res.data.success) {
         toast.success(res.data.message);
 
+        const detectedRole = res.data.role || res.data.user?.role || "admin";
+
         // SAVE USER INFO
-        localStorage.setItem("userRole", role);
+        localStorage.setItem("userRole", detectedRole);
         localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("userId", userId);
-        localStorage.setItem("userName", res.data.user.name);
+        localStorage.setItem("userId", res.data.user?.userId || res.data.user?.adminId || userId);
+        localStorage.setItem("userName", res.data.user?.name || "Staff");
 
         if (res.data.token) {
           localStorage.setItem("token", res.data.token);
         }
 
         // USER IMAGE
-        let imageUrl = "https://i.pravatar.cc/150?img=12";
-
-        if (role === "doctor" && res.data.user.image) {
-          imageUrl = res.data.user.image;
-        } else if (
-          role === "receptionist" &&
-          res.data.user.receptionistimage
-        ) {
-          imageUrl = res.data.user.receptionistimage;
-        }
+        let imageUrl =
+          res.data.user?.image ||
+          res.data.user?.receptionistimage ||
+          "https://i.pravatar.cc/150?img=12";
 
         localStorage.setItem("userImage", imageUrl);
 
-        // NAVIGATION
-        if (role === "admin") {
+        // SEAMLESS UNIFIED NAVIGATION BASED ON ROLE IN DATABASE
+        if (detectedRole === "admin") {
           navigate("/admin/dashboard");
-        } else if (role === "doctor") {
+        } else if (detectedRole === "doctor") {
           navigate("/doctor/dashboard");
-        } else if (role === "receptionist") {
-          navigate("/receptionist/add-appointment");
+        } else if (detectedRole === "receptionist") {
+          navigate("/receptionist/dashboard");
+        } else if (detectedRole === "pharmacy" || detectedRole === "pharmacist") {
+          navigate("/pharmacy/dashboard");
+        } else if (detectedRole === "billing") {
+          navigate("/billing/dashboard");
+        } else {
+          navigate("/admin/dashboard");
         }
       }
     } catch (error) {
-      if (error.response && error.response.data) {
+      if (error.response && error.response.data && error.response.data.message) {
         toast.error(error.response.data.message);
       } else {
         toast.error("An error occurred during login.");
@@ -166,43 +167,10 @@ function Login() {
           {/* RIGHT SIGN IN FORM PANEL */}
           <div className="vital-auth-form-panel">
             <div className="vital-form-header">
-              <h1 className="vital-form-title">Sign In</h1>
+              <h1 className="vital-form-title">Staff Portal Sign In</h1>
               <p className="vital-form-subtitle">
-                Select your account role and enter your credentials to access the platform.
+                Enter your User ID and Email. The unified system automatically verifies your role and opens your designated dashboard.
               </p>
-            </div>
-
-            {/* ROLE SELECTOR TABS */}
-            <div className="vital-role-selector">
-              <button
-                type="button"
-                className={`vital-role-btn ${role === "admin" ? "active" : ""}`}
-                onClick={() => setRole("admin")}
-                disabled={loading}
-              >
-                <UserCog size={16} />
-                <span>Admin</span>
-              </button>
-
-              <button
-                type="button"
-                className={`vital-role-btn ${role === "doctor" ? "active" : ""}`}
-                onClick={() => setRole("doctor")}
-                disabled={loading}
-              >
-                <Stethoscope size={16} />
-                <span>Doctor</span>
-              </button>
-
-              <button
-                type="button"
-                className={`vital-role-btn ${role === "receptionist" ? "active" : ""}`}
-                onClick={() => setRole("receptionist")}
-                disabled={loading}
-              >
-                <UserCheck size={16} />
-                <span>Receptionist</span>
-              </button>
             </div>
 
             {/* SIGN IN FORM */}

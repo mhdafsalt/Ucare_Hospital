@@ -107,7 +107,24 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 6px;
+}
+
+.vital-popover-header-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vital-header-shield-icon {
+  color: #0284c7;
+}
+
+.vital-popover-desc {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.45;
+  margin: 0 0 16px 0;
 }
 
 .vital-popover-title {

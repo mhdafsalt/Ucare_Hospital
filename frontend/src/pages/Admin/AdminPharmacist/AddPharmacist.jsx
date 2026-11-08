@@ -124,11 +124,16 @@ function AddPharmacist() {
     if (!validateForm()) return;
 
     try {
+      const payload = {
+        ...formData,
+        userId: formData.pharmacistId,
+        role: "pharmacist",
+      };
       if (editingId) {
-        await updatePharmacistAPI(editingId, formData);
+        await updatePharmacistAPI(editingId, payload);
         toast.success("Pharmacist updated successfully");
       } else {
-        await addPharmacistAPI(formData);
+        await addPharmacistAPI(payload);
         toast.success("Pharmacist created with login credentials");
       }
       setShowForm(false);

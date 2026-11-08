@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../../components/Sidebar/Sidebar";
+import { motion, AnimatePresence } from "framer-motion";
 import "./addPatients.css";
+import "../../Admin/AdminPharmacist/AddPharmacist.css";
 import { toast } from "react-toastify";
 
 import {
@@ -16,6 +18,8 @@ import {
     X,
     CalendarCheck,
     ClipboardList,
+    MapPin,
+    Phone,
 } from "lucide-react";
 
 
@@ -341,244 +345,272 @@ function AddPatients() {
 
                     </div>
 
-                    {/* ================= LAYOUT ================= */}
-
-                    <div className="doctors-layout">
-
-                        {/* FORM */}
-
+                    {/* MODAL POPUP FOR ADD / EDIT PATIENT */}
+                    <AnimatePresence>
                         {showForm && (
-                            <div className="doctors-sideForm">
-
-                                <div className="doctors-modalHeader">
-
-                                    <h2>
-                                        {editingId
-                                            ? "Update Patient"
-                                            : "Add Patient"}
-                                    </h2>
-
-                                    <button
-                                        onClick={() => setShowForm(false)}
-                                        className="doctors-closeBtn"
-                                    >
-                                        <X />
-                                    </button>
-
-                                </div>
-
-                                <form
-                                    onSubmit={
-                                        editingId
-                                            ? handleUpdatePatient
-                                            : handleAddPatient
-                                    }
-                                    className="doctors-form"
+                            <div className="staff-modal-backdrop" onClick={() => setShowForm(false)}>
+                                <motion.div
+                                    className="staff-modal-box"
+                                    onClick={(e) => e.stopPropagation()}
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
                                 >
-
-                                    <input
-                                        name="name"
-                                        placeholder="Patient Name"
-                                        onChange={handleChange}
-                                        value={formData.name}
-                                    />
-
-                                    <input
-                                        name="age"
-                                        placeholder="Age"
-                                        onChange={handleChange}
-                                        value={formData.age}
-                                    />
-
-                                    <select
-                                        name="gender"
-                                        onChange={handleChange}
-                                        value={formData.gender}
-                                    >
-                                        <option value="">
-                                            Select Gender
-                                        </option>
-
-                                        <option value="Male">
-                                            Male
-                                        </option>
-
-                                        <option value="Female">
-                                            Female
-                                        </option>
-
-                                        <option value="Other">
-                                            Other
-                                        </option>
-                                    </select>
-
-                                    {/* <input
-                                        name="disease"
-                                        placeholder="Disease"
-                                        onChange={handleChange}
-                                        value={formData.disease}
-                                    /> */}
-
-                                    <input
-                                        name="address"
-                                        placeholder="Address"
-                                        onChange={handleChange}
-                                        value={formData.address}
-                                    />
-
-                                    <input
-                                        name="phone"
-                                        placeholder="Phone"
-                                        onChange={handleChange}
-                                        value={formData.phone}
-                                    />
-
-                                    {/* <input
-                    name="image"
-                    placeholder="Image URL"
-                    onChange={handleChange}
-                    value={formData.image}
-                  /> */}
-
-                                    <div className="doctors-form-actions">
-
-                                        <button
-                                            type="submit"
-                                            className="doctors-submitBtn"
-                                        >
-                                            {editingId
-                                                ? "Update Patient"
-                                                : "Save Patient"}
+                                    <div className="staff-modal-header">
+                                        <div>
+                                            <h3>{editingId ? "Update Patient Record" : "Register New Patient"}</h3>
+                                            <p>{editingId ? "Modify demographic or contact details" : "Record patient credentials and medical contact information"}</p>
+                                        </div>
+                                        <button onClick={() => setShowForm(false)} className="close-btn">
+                                            <X size={18} />
                                         </button>
-
                                     </div>
 
-                                </form>
+                                    <form
+                                        onSubmit={
+                                            editingId
+                                                ? handleUpdatePatient
+                                                : handleAddPatient
+                                        }
+                                        className="staff-form-grid"
+                                    >
+                                        <div className="form-group">
+                                            <label>Full Patient Name *</label>
+                                            <input
+                                                name="name"
+                                                placeholder="e.g. John Doe"
+                                                onChange={handleChange}
+                                                value={formData.name}
+                                                required
+                                            />
+                                        </div>
 
+                                        <div className="form-group">
+                                            <label>Age *</label>
+                                            <input
+                                                type="number"
+                                                name="age"
+                                                placeholder="e.g. 32"
+                                                onChange={handleChange}
+                                                value={formData.age}
+                                                required
+                                            />
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label>Gender *</label>
+                                            <select
+                                                name="gender"
+                                                onChange={handleChange}
+                                                value={formData.gender}
+                                                required
+                                            >
+                                                <option value="">Select Gender</option>
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label>Phone Number *</label>
+                                            <input
+                                                name="phone"
+                                                placeholder="e.g. +1 (555) 019-2834"
+                                                onChange={handleChange}
+                                                value={formData.phone}
+                                                required
+                                            />
+                                        </div>
+
+                                        <div className="form-group full-width">
+                                            <label>Residential Address *</label>
+                                            <input
+                                                name="address"
+                                                placeholder="e.g. 124 Medical Plaza, Suite 4B, New York"
+                                                onChange={handleChange}
+                                                value={formData.address}
+                                                required
+                                            />
+                                        </div>
+
+                                        <div className="form-group full-width">
+                                            <label>Profile Image URL (optional)</label>
+                                            <input
+                                                name="image"
+                                                placeholder="https://..."
+                                                onChange={handleChange}
+                                                value={formData.image}
+                                            />
+                                        </div>
+
+                                        <div className="form-actions-row full-width">
+                                            <button
+                                                type="button"
+                                                className="btn-secondary"
+                                                onClick={() => setShowForm(false)}
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                className="btn-submit"
+                                            >
+                                                {editingId
+                                                    ? "Update Patient"
+                                                    : "Save Patient"}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </motion.div>
+                            </div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* ================= TABLE CONTAINER ================= */}
+                    <div className="patients-table-container">
+
+                        {/* LOADING */}
+                        {loading && (
+                            <div className="patients-loading">
+                                <div className="table-spinner"></div>
+                                <p>Loading patient records...</p>
                             </div>
                         )}
 
-                        {/* ================= GRID ================= */}
-
-                        <div className="patients-table-container">
-
-                            {/* LOADING */}
-                            {loading && (
-                                <div className="patients-loading">
-                                    Loading patients...
+                        {/* EMPTY STATE */}
+                        {!loading && filteredPatients.length === 0 && (
+                            <div className="empty-state-card">
+                                <div className="empty-icon-box">
+                                    <Users size={36} />
                                 </div>
-                            )}
+                                <h4>{showDeleted ? "Trash is Empty" : "No Patients Found"}</h4>
+                                <p>
+                                    {showDeleted
+                                        ? "There are no deleted patient records in the trash bin."
+                                        : search
+                                        ? `No registered patients matching "${search}" were found.`
+                                        : "No patient records have been added to the system yet."}
+                                </p>
+                                {!showDeleted && (
+                                    <button onClick={openAddForm} className="empty-action-btn">
+                                        <Plus size={16} /> Register New Patient
+                                    </button>
+                                )}
+                            </div>
+                        )}
 
-                            {/* EMPTY STATE */}
-                            {!loading && filteredPatients.length === 0 && (
-                                <div className="patients-empty">
-                                    No patients found
-                                </div>
-                            )}
+                        {/* TABLE */}
+                        {!loading && filteredPatients.length > 0 && (
+                            <table className="patients-table">
+                                <thead>
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Age</th>
+                                        <th>Gender</th>
+                                        <th>Address</th>
+                                        <th>Phone</th>
+                                        <th style={{ textAlign: "right" }}>Actions</th>
+                                    </tr>
+                                </thead>
 
-                            {/* TABLE */}
-                            {!loading && filteredPatients.length > 0 && (
-                                <table className="patients-table">
+                                <tbody>
+                                    {filteredPatients.map((patient) => (
+                                        <tr key={patient._id}>
+                                            {/* PATIENT INFO */}
+                                            <td className="patient-info-cell">
+                                                <div className="patient-avatar">
+                                                    {patient.image ? (
+                                                        <img
+                                                            src={patient.image}
+                                                            alt={patient.name}
+                                                            onError={(e) => {
+                                                                e.target.onerror = null;
+                                                                e.target.src =
+                                                                    "https://cdn-icons-png.flaticon.com/512/3774/3774299.png";
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <div className="patient-avatar-fallback">
+                                                            {patient.name?.charAt(0)}
+                                                        </div>
+                                                    )}
+                                                </div>
 
-                                    <thead>
-                                        <tr>
-                                            <th>Patient</th>
-                                            <th>Age</th>
-                                            <th>Gender</th>
-                                            <th>Address</th>
-                                            <th>Phone</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody>
-                                        {filteredPatients.map((patient) => (
-                                            <tr key={patient._id}>
-
-                                                {/* PATIENT INFO */}
-                                                <td className="patient-info-cell">
-
-                                                    <div className="patient-avatar">
-
-                                                        {patient.image ? (
-                                                            <img
-                                                                src={patient.image}
-                                                                alt={patient.name}
-                                                                onError={(e) => {
-                                                                    e.target.onerror = null;
-                                                                    e.target.src =
-                                                                        "https://cdn-icons-png.flaticon.com/512/3774/3774299.png";
-                                                                }}
-                                                            />
-                                                        ) : (
-                                                            <div className="patient-avatar-fallback">
-                                                                {patient.name?.charAt(0)}
-                                                            </div>
-                                                        )}
-
-                                                    </div>
-
+                                                <div>
                                                     <div className="patient-name">
                                                         {patient.name}
                                                     </div>
+                                                    <span style={{ fontSize: "11px", color: "#64748b" }}>
+                                                        ID: #{patient._id?.slice(-6).toUpperCase()}
+                                                    </span>
+                                                </div>
+                                            </td>
 
-                                                </td>
+                                            {/* AGE */}
+                                            <td>
+                                                <span className="badge-age">{patient.age} yrs</span>
+                                            </td>
 
-                                                {/* AGE */}
-                                                <td>{patient.age}</td>
+                                            {/* GENDER */}
+                                            <td>
+                                                <span className={`badge-gender ${patient.gender?.toLowerCase() || ""}`}>
+                                                    {patient.gender}
+                                                </span>
+                                            </td>
 
-                                                {/* GENDER */}
-                                                <td>{patient.gender}</td>
+                                            {/* ADDRESS */}
+                                            <td>
+                                                <span className="cell-address" title={patient.address}>
+                                                    <MapPin size={13} style={{ flexShrink: 0, color: "#94a3b8" }} />
+                                                    {patient.address}
+                                                </span>
+                                            </td>
 
-                                                {/* ADDRESS */}
-                                                <td>{patient.address}</td>
+                                            {/* PHONE */}
+                                            <td>
+                                                <span className="cell-phone">
+                                                    <Phone size={13} style={{ flexShrink: 0, color: "#94a3b8" }} />
+                                                    {patient.phone}
+                                                </span>
+                                            </td>
 
-                                                {/* PHONE */}
-                                                <td>{patient.phone}</td>
-
-                                                {/* ACTIONS */}
-                                                <td>
-
-                                                    {showDeleted ? (
+                                            {/* ACTIONS */}
+                                            <td style={{ textAlign: "right" }}>
+                                                {showDeleted ? (
+                                                    <button
+                                                        onClick={() =>
+                                                            handleRestorePatient(patient._id)
+                                                        }
+                                                        className="patients-restoreBtn"
+                                                    >
+                                                        Restore
+                                                    </button>
+                                                ) : (
+                                                    <div className="patients-actions" style={{ justifyContent: "flex-end" }}>
                                                         <button
-                                                            onClick={() =>
-                                                                handleRestorePatient(patient._id)
-                                                            }
-                                                            className="patients-restoreBtn"
+                                                            onClick={() => handleEdit(patient)}
+                                                            className="patients-editBtn"
+                                                            title="Edit Patient"
                                                         >
-                                                            Restore
+                                                            <Pencil size={15} />
                                                         </button>
-                                                    ) : (
-                                                        <div className="patients-actions">
 
-                                                            <button
-                                                                onClick={() => handleEdit(patient)}
-                                                                className="patients-editBtn"
-                                                            >
-                                                                <Pencil size={16} />
-                                                            </button>
-
-                                                            <button
-                                                                onClick={() => handleDelete(patient._id)}
-                                                                className="patients-deleteBtn"
-                                                            >
-                                                                <Trash2 size={16} />
-                                                            </button>
-
-                                                        </div>
-                                                    )}
-
-                                                </td>
-
-                                            </tr>
-                                        ))}
-                                    </tbody>
-
-                                </table>
-                            )}
-
-                        </div>
-
+                                                        <button
+                                                            onClick={() => handleDelete(patient._id)}
+                                                            className="patients-deleteBtn"
+                                                            title="Delete Patient"
+                                                        >
+                                                            <Trash2 size={15} />
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
                     </div>
 
                 </div>

@@ -200,24 +200,47 @@ function DoctorDashboard() {
 
                     {/* TABLE */}
                     <div className="patients-table-container">
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-                            <h3>Appointments List</h3>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#f5f5f5', padding: '8px 12px', borderRadius: '8px' }}>
-                                <Search size={16} color="#666" />
-                                <input
-                                    type="text"
-                                    placeholder="Filter by doctor name..."
-                                    value={searchDoctor}
-                                    onChange={(e) => setSearchDoctor(e.target.value)}
-                                    style={{ border: 'none', background: 'transparent', outline: 'none' }}
-                                />
+                        <div className="table-card-header">
+                            <div>
+                                <h3 className="table-card-title">Appointments List</h3>
+                                <p className="table-card-subtitle">Assigned patient consultations and appointments queue</p>
+                            </div>
+                            <div className="table-card-actions">
+                                <div className="doctor-search-box">
+                                    <Search size={15} color="#64748b" />
+                                    <input
+                                        type="text"
+                                        placeholder="Filter by doctor name..."
+                                        value={searchDoctor}
+                                        onChange={(e) => setSearchDoctor(e.target.value)}
+                                    />
+                                </div>
+                                <button
+                                    onClick={() => setShowDeleted(!showDeleted)}
+                                    className="toggle-deleted-btn"
+                                >
+                                    {showDeleted ? "View Active" : "View Trash"}
+                                </button>
                             </div>
                         </div>
 
-                        {loading && <p>Loading...</p>}
+                        {loading && (
+                            <div className="patients-loading">
+                                <div className="table-spinner"></div>
+                                <p>Loading doctor appointments...</p>
+                            </div>
+                        )}
 
                         {!loading && filteredAppointments.length === 0 && (
-                            <p>No appointments found</p>
+                            <div className="empty-state-card" style={{ padding: '56px 20px', textAlign: 'center' }}>
+                                <div className="empty-icon-box">
+                                    <CalendarCheck size={32} />
+                                </div>
+                                <h4>{showDeleted ? "Trash is Empty" : "No Appointments Found"}</h4>
+                                <p>
+                                    {showDeleted ? "No deleted appointments found in trash." : "There are currently no scheduled appointments for your profile."}
+                                </p>
+                            </div>
                         )}
 
                         {!loading && filteredAppointments.length > 0 && (
@@ -230,7 +253,7 @@ function DoctorDashboard() {
                                         <th>Date</th>
                                         <th>Time</th>
                                         <th>Status</th>
-                                        <th>Actions</th>
+                                        <th style={{ textAlign: "right", paddingRight: "28px" }}>Actions</th>
                                     </tr>
                                 </thead>
 
@@ -284,7 +307,7 @@ function DoctorDashboard() {
                                             </td>
 
                                             {/* ACTIONS */}
-                                            <td>
+                                            <td style={{ textAlign: "right", paddingRight: "28px" }}>
 
                                                 {showDeleted ? (
                                                     <button
@@ -294,12 +317,11 @@ function DoctorDashboard() {
                                                         Restore
                                                     </button>
                                                 ) : (
-                                                    <div className="patients-actions">
+                                                    <div className="patients-actions" style={{ justifyContent: "flex-end" }}>
 
                                                         <button
                                                             onClick={() => handleStatusChange(a._id, a.status)}
-                                                            className="patients-editBtn"
-                                                            style={a.status === "Completed" ? { backgroundColor: "#10b981", color: "white", borderColor: "#10b981" } : {}}
+                                                            className={`doctor-status-btn ${a.status === "Completed" ? "is-completed" : "is-pending"}`}
                                                         >
                                                             {a.status === "Completed" ? "Completed" : "Pending"}
                                                         </button>

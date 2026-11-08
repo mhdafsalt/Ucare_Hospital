@@ -81,7 +81,7 @@ export const adminMenu = [
       {
         name: "Pharmacy",
         icon: <Pill size={18} />,
-        path: "/admin/pharmacy",
+        path: "/pharmacy/dashboard",
       },
       {
         name: "Billing",
@@ -159,7 +159,7 @@ export const doctorMenu = [
 ];
 
 // ============================================================================
-// 3. RECEPTIONIST PANEL MENU CONFIGURATION (8 ITEMS)
+// 3. RECEPTIONIST PANEL MENU CONFIGURATION (6 ITEMS)
 // ============================================================================
 export const receptionistMenu = [
   {
@@ -199,16 +199,6 @@ export const receptionistMenu = [
         name: "Doctor Availability",
         icon: <Clock size={18} />,
         path: "/receptionist/doctor-availability",
-      },
-      {
-        name: "Billing Assistance",
-        icon: <Receipt size={18} />,
-        path: "/receptionist/billing",
-      },
-      {
-        name: "Payments",
-        icon: <CreditCard size={18} />,
-        path: "/receptionist/payments",
       },
     ],
   },

@@ -1,31 +1,16 @@
 const mongoose = require("mongoose");
+const UserModel = require("./User");
 
 const adminSchema = new mongoose.Schema(
   {
-    adminId: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    name: {
-      type: String,
-      required: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    isDeleted: {
-      type: Boolean,
-      default: false,
-    },
+    adminId: { type: String, trim: true },
   },
-  {
-    timestamps: true,
-  }
+  { discriminatorKey: "role" }
 );
 
-const AdminModel = mongoose.model("Admin", adminSchema);
+const AdminModel =
+  UserModel.discriminators && UserModel.discriminators["admin"]
+    ? UserModel.discriminators["admin"]
+    : UserModel.discriminator("admin", adminSchema);
 
 module.exports = AdminModel;

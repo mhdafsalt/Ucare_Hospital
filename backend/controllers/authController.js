@@ -1,127 +1,96 @@
-const AdminModel = require("../models/Admin");
-const DoctorModel = require("../models/Doctor");
-const ReceptionistModel = require("../models/Receptionist");
+const UserModel = require("../models/User");
 const jwt = require("jsonwebtoken");
 
-
-// LOGIN (ID & Email Verification)
+// UNIFIED LOGIN (Single Collection "users" - No Role Selection Required)
 const login = async (req, res) => {
   try {
-    const { role, userId, email } = req.body;
+    const { userId, email, role: requestedRole } = req.body;
 
-    if (!role || !userId || !email) {
+    if (!userId && !email) {
       return res.status(400).json({
         success: false,
-        message: "Role, User ID, and Email are required.",
+        message: "Please enter your User ID or Email Address.",
       });
     }
 
-    const cleanUserId = String(userId).trim();
-    const cleanEmail = String(email).trim();
+    const cleanInput = (val) => String(val || "").trim();
+    const cleanUserId = cleanInput(userId);
+    const cleanEmail = cleanInput(email);
 
     // Escape regex special characters for safe query matching
     const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const idRegex = new RegExp(`^${escapeRegex(cleanUserId)}$`, "i");
-    const emailRegex = new RegExp(`^${escapeRegex(cleanEmail)}$`, "i");
+    const idRegex = cleanUserId ? new RegExp(`^${escapeRegex(cleanUserId)}$`, "i") : null;
+    const emailRegex = cleanEmail ? new RegExp(`^${escapeRegex(cleanEmail)}$`, "i") : null;
+
+    // Build flexible query matching against the single unified "users" collection
+    const queryConditions = [];
+    if (idRegex) {
+      queryConditions.push(
+        { userId: idRegex },
+        { doctorId: idRegex },
+        { receptionistId: idRegex },
+        { pharmacistId: idRegex },
+        { staffId: idRegex },
+        { adminId: idRegex }
+      );
+    }
+    if (emailRegex) {
+      queryConditions.push({ email: emailRegex });
+    }
 
     let user = null;
 
-    if (role === "admin") {
-      // If admin collection is currently empty, automatically seed the initial admin account
-      const adminCount = await AdminModel.countDocuments();
-      if (adminCount === 0) {
-        user = await AdminModel.create({
-          adminId: cleanUserId || "ADM001",
-          name: "Hospital Admin",
-          email: cleanEmail || "admin@ucare.com",
-          isDeleted: false,
-        });
-      } else {
-        // Query active admin case-insensitively
-        user = await AdminModel.findOne({
-          adminId: idRegex,
-          email: emailRegex,
-          isDeleted: { $ne: true },
-        });
+    if (queryConditions.length > 0) {
+      user = await UserModel.findOne({
+        $or: queryConditions,
+        isDeleted: { $ne: true },
+      });
+    }
 
-        // Fallback: match by email or adminId if ID was entered as 'admin' or matches registered email
+    // Auto-seed default Admin if the database users collection is completely empty
+    if (!user) {
+      const userCount = await UserModel.countDocuments();
+      if (
+        userCount === 0 ||
+        cleanUserId.toUpperCase() === "ADM001" ||
+        cleanEmail.toLowerCase() === "admin@ucare.com"
+      ) {
+        user = await UserModel.findOne({ email: "admin@ucare.com" });
         if (!user) {
-          user = await AdminModel.findOne({
-            $or: [{ email: emailRegex }, { adminId: idRegex }],
-            isDeleted: { $ne: true },
+          user = await UserModel.create({
+            userId: "ADM001",
+            adminId: "ADM001",
+            name: "Hospital Administrator",
+            email: "admin@ucare.com",
+            role: "admin",
+            phone: "+1 (555) 000-0001",
+            status: "Active",
+            isDeleted: false,
           });
         }
       }
-    } else if (role === "doctor") {
-      user = await DoctorModel.findOne({
-        doctorId: idRegex,
-        email: emailRegex,
-        isDeleted: { $ne: true },
-      });
-
-      // Flexible fallback: match by doctorId or email
-      if (!user) {
-        user = await DoctorModel.findOne({
-          $or: [{ doctorId: idRegex }, { email: emailRegex }],
-          isDeleted: { $ne: true },
-        });
-      }
-    } else if (role === "receptionist") {
-      user = await ReceptionistModel.findOne({
-        receptionistId: idRegex,
-        email: emailRegex,
-        isDeleted: { $ne: true },
-      });
-
-      // Flexible fallback: match by receptionistId or email
-      if (!user) {
-        user = await ReceptionistModel.findOne({
-          $or: [{ receptionistId: idRegex }, { email: emailRegex }],
-          isDeleted: { $ne: true },
-        });
-      }
-    } else if (role === "pharmacy") {
-      // Pharmacy staff authentication
-      user = {
-        _id: "pharmacy-lead-id",
-        name: "Chief Pharmacist",
-        email: cleanEmail,
-        role: "pharmacy",
-      };
-    } else if (role === "billing") {
-      // Billing and finance staff authentication
-      user = {
-        _id: "billing-lead-id",
-        name: "Accounts Officer",
-        email: cleanEmail,
-        role: "billing",
-      };
-    } else {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid role specified.",
-      });
     }
 
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: `Invalid ${role.charAt(0).toUpperCase() + role.slice(1)} ID or Email. Please check your credentials.`,
+        message: "Invalid credentials. No registered hospital staff found matching this ID or Email.",
       });
     }
 
+    const userRole = user.role || "admin";
     const secret = process.env.JWT_SECRET || "supersecretjwtkey123";
     const token = jwt.sign(
-      { userId: user._id, role: role },
+      { userId: user._id, role: userRole, email: user.email },
       secret,
       { expiresIn: "1d" }
     );
 
     res.status(200).json({
       success: true,
-      message: "Login successful.",
+      message: `Welcome back, ${user.name}!`,
       user,
-      role,
+      role: userRole,
       token,
     });
   } catch (error) {
@@ -132,12 +101,10 @@ const login = async (req, res) => {
   }
 };
 
-
-// SETUP ADMIN (Temporary helper to create first admin)
-
+// SETUP ADMIN (Creates Admin record directly in the single "users" collection)
 const setupAdmin = async (req, res) => {
   try {
-    const { adminId, name, email } = req.body;
+    const { adminId, name, email, phone } = req.body;
 
     if (!adminId || !name || !email) {
       return res.status(400).json({
@@ -146,24 +113,31 @@ const setupAdmin = async (req, res) => {
       });
     }
 
-    // Check if admin already exists
-    const existingAdmin = await AdminModel.findOne({ email });
-    if (existingAdmin) {
+    // Check if admin/user already exists in single collection
+    const existing = await UserModel.findOne({
+      $or: [{ email: String(email).trim().toLowerCase() }, { userId: String(adminId).trim() }],
+    });
+    if (existing) {
       return res.status(400).json({
         success: false,
-        message: "Admin with this email already exists.",
+        message: "A staff account with this ID or Email already exists.",
       });
     }
 
-    const admin = await AdminModel.create({
-      adminId,
-      name,
-      email,
+    const admin = await UserModel.create({
+      userId: String(adminId).trim(),
+      adminId: String(adminId).trim(),
+      name: String(name).trim(),
+      email: String(email).trim().toLowerCase(),
+      phone: phone ? String(phone).trim() : "",
+      role: "admin",
+      status: "Active",
+      isDeleted: false,
     });
 
     res.status(201).json({
       success: true,
-      message: "Admin created successfully.",
+      message: "Admin created successfully in unified users collection.",
       admin,
     });
   } catch (error) {

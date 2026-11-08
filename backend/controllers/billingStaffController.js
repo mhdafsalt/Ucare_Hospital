@@ -20,7 +20,13 @@ exports.getBillingStaff = async (req, res) => {
 // ADD BILLING STAFF
 exports.addBillingStaff = async (req, res) => {
   try {
-    const staff = await BillingStaff.create(req.body);
+    const payload = { ...req.body };
+    const uid = payload.userId || payload.staffId || `BILL${Date.now()}`;
+    payload.userId = uid;
+    payload.staffId = payload.staffId || uid;
+    payload.role = "billing";
+
+    const staff = await BillingStaff.create(payload);
 
     // Log Activity
     await Activity.create({
@@ -43,7 +49,12 @@ exports.addBillingStaff = async (req, res) => {
 // UPDATE BILLING STAFF
 exports.updateBillingStaff = async (req, res) => {
   try {
-    const staff = await BillingStaff.findByIdAndUpdate(req.params.id, req.body, {
+    const payload = { ...req.body };
+    if (payload.staffId && !payload.userId) {
+      payload.userId = payload.staffId;
+    }
+
+    const staff = await BillingStaff.findByIdAndUpdate(req.params.id, payload, {
       new: true,
     });
 
