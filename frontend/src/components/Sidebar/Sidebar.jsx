@@ -3,7 +3,7 @@ import "./Sidebar.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Menu, X, LogOut, ChevronRight } from "lucide-react";
 
-function Sidebar({ menuItems = [], logo = "Ucare Hospital" }) {
+function Sidebar({ menuItems = [], logo = "Ucare Hospital", panelSubtitle = "" }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -20,6 +20,16 @@ function Sidebar({ menuItems = [], logo = "Ucare Hospital" }) {
       setUserEmail(`${storedRole.toLowerCase()}@ucare.com`);
     }
   }, []);
+
+  const getPanelSubtitle = () => {
+    if (panelSubtitle) return panelSubtitle;
+    if (location.pathname.startsWith("/admin")) return "HOSPITAL ADMIN";
+    if (location.pathname.startsWith("/doctor")) return "DOCTOR PORTAL";
+    if (location.pathname.startsWith("/receptionist")) return "RECEPTION DESK";
+    if (location.pathname.startsWith("/pharmacy")) return "PHARMACY DEPT";
+    if (location.pathname.startsWith("/billing")) return "BILLING & ACCOUNTS";
+    return `${userRole.toUpperCase()} PANEL`;
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -39,7 +49,7 @@ function Sidebar({ menuItems = [], logo = "Ucare Hospital" }) {
           </div>
           <div className="brand-text-col">
             <span className="mobile-brand-name">Ucare</span>
-            <span className="brand-subtitle">ADMIN</span>
+            <span className="brand-subtitle">{getPanelSubtitle()}</span>
           </div>
         </div>
 
@@ -70,7 +80,7 @@ function Sidebar({ menuItems = [], logo = "Ucare Hospital" }) {
             </div>
             <div className="brand-text-col">
               <span className="brand-title">Ucare</span>
-              <span className="brand-subtitle">HOSPITAL ADMIN</span>
+              <span className="brand-subtitle">{getPanelSubtitle()}</span>
             </div>
           </div>
         </div>

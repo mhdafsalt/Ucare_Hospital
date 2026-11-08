@@ -26,25 +26,7 @@ import {
     restoreAppointmentAPI,
 } from "../../../api/appointmentsApi";
 import { FaCalendarCheck, FaClipboardList, FaFilter, FaMoneyBillWave, FaSearch, FaUsers, FaUserTie } from "react-icons/fa";
-
-const menuItems = [
-    {
-        title: "MENU",
-        items: [
-            // { name: "Dashboard", icon: <LayoutDashboard size={18} />, path: "/receptionist/dashboard" },
-            { name: "Appointments", icon: <CalendarCheck size={18} />, path: "/receptionist/add-appointment", active: true },
-            { name: "Patients", icon: <Users size={18} />, path: "/receptionist/add-patient" },
-            // { name: "Records", icon: <ClipboardList size={18} /> },
-            // { name: "About-us", icon: <Circle size={18} /> },
-        ],
-    },
-    {
-        title: "SUPPORT",
-        items: [
-            { name: "Help & Support", icon: <HelpCircle size={18} />  ,path: "/support"},
-        ],
-    },
-];
+import { receptionistMenu } from "../../../config/panelMenus";
 
 function Appointments() {
     const [showForm, setShowForm] = useState(false);
@@ -243,7 +225,7 @@ function Appointments() {
     return (
         <div className="app">
 
-            <Sidebar logo="Ucare." menuItems={menuItems} />
+            <Sidebar logo="Ucare." menuItems={receptionistMenu} />
 
             <main className="main">
 

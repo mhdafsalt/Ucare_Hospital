@@ -33,57 +33,7 @@ import {
     updatePatientAPI,
     restorePatientAPI,
 } from "../../../api/patientApi";
-
-const menuItems = [
-    {
-        title: "MENU",
-
-        items: [
-            // {
-            //     name: "Dashboard",
-            //     icon: <LayoutDashboard size={18} />,
-            //     path: "/receptionist/dashboard",
-            // },
-
-            {
-                name: "Appointments",
-                icon: <CalendarCheck size={18} />,
-                path: "/receptionist/add-appointment",
-            },
-
-            {
-                name: "Patients",
-                icon: <Users size={18} />,
-                path: "/receptionist/add-patient",
-                active: true,
-
-            },
-
-            // {
-            //     name: "Records",
-            //     icon: <ClipboardList size={18} />,
-            //     path: "",
-            // },
-
-            // {
-            //     name: "About-us",
-            //     icon: <Circle size={18} />,
-            // },
-        ],
-    },
-
-    {
-        title: "SUPPORT",
-
-        items: [
-            {
-                name: "Help & Support",
-                icon: <HelpCircle size={18} />,
-                path: "/support",
-            },
-        ],
-    },
-];
+import { receptionistMenu } from "../../../config/panelMenus";
 
 function AddPatients() {
     const [showForm, setShowForm] = useState(false);
@@ -303,7 +253,7 @@ function AddPatients() {
 
             <Sidebar
                 logo="Ucare."
-                menuItems={menuItems}
+                menuItems={receptionistMenu}
             />
 
             {/* MAIN */}

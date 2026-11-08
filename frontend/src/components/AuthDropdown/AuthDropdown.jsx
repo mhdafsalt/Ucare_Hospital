@@ -3,7 +3,7 @@ import "./AuthDropdown.css";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { loginAPI } from "../../api/authApi";
-import { X, UserCog, Stethoscope, UserCheck, User, Mail } from "lucide-react";
+import { X, UserCog, Stethoscope, UserCheck, User, Mail, Pill, Receipt } from "lucide-react";
 
 function AuthDropdown({ isOpen, onClose, placement = "right" }) {
   const [role, setRole] = useState("admin");
@@ -91,7 +91,11 @@ function AuthDropdown({ isOpen, onClose, placement = "right" }) {
         } else if (role === "doctor") {
           navigate("/doctor/dashboard");
         } else if (role === "receptionist") {
-          navigate("/receptionist/add-appointment");
+          navigate("/receptionist/dashboard");
+        } else if (role === "pharmacy") {
+          navigate("/pharmacy/dashboard");
+        } else if (role === "billing") {
+          navigate("/billing/dashboard");
         }
       }
     } catch (error) {
@@ -116,14 +120,22 @@ function AuthDropdown({ isOpen, onClose, placement = "right" }) {
       ? "e.g. ADM001 or admin"
       : role === "doctor"
       ? "e.g. DOC001"
-      : "e.g. REC001";
+      : role === "receptionist"
+      ? "e.g. REC001"
+      : role === "pharmacy"
+      ? "e.g. PHARM01"
+      : "e.g. BILL01";
 
   const emailPlaceholder =
     role === "admin"
       ? "e.g. admin@ucare.com"
       : role === "doctor"
       ? "e.g. doctor@ucare.com"
-      : "e.g. receptionist@ucare.com";
+      : role === "receptionist"
+      ? "e.g. receptionist@ucare.com"
+      : role === "pharmacy"
+      ? "e.g. pharmacy@ucare.com"
+      : "e.g. billing@ucare.com";
 
   return (
     <div className={`vital-popover-anchor placement-${placement}`} ref={dropdownRef}>
@@ -172,7 +184,25 @@ function AuthDropdown({ isOpen, onClose, placement = "right" }) {
             disabled={loading}
           >
             <UserCheck size={13} />
-            <span>Receptionist</span>
+            <span>Reception</span>
+          </button>
+          <button
+            type="button"
+            className={`vital-popover-role-pill ${role === "pharmacy" ? "active" : ""}`}
+            onClick={() => setRole("pharmacy")}
+            disabled={loading}
+          >
+            <Pill size={13} />
+            <span>Pharmacy</span>
+          </button>
+          <button
+            type="button"
+            className={`vital-popover-role-pill ${role === "billing" ? "active" : ""}`}
+            onClick={() => setRole("billing")}
+            disabled={loading}
+          >
+            <Receipt size={13} />
+            <span>Billing</span>
           </button>
         </div>
 
@@ -242,12 +272,26 @@ function AuthDropdown({ isOpen, onClose, placement = "right" }) {
                 setUserId("ADM001");
                 setEmail("admin@ucare.com");
                 toast.info("Auto-filled default Admin credentials (ADM001 / admin@ucare.com)");
+              } else if (role === "pharmacy") {
+                setUserId("PHARM01");
+                setEmail("pharmacy@ucare.com");
+                toast.info("Auto-filled Pharmacy credentials (PHARM01 / pharmacy@ucare.com)");
+              } else if (role === "billing") {
+                setUserId("BILL01");
+                setEmail("billing@ucare.com");
+                toast.info("Auto-filled Billing credentials (BILL01 / billing@ucare.com)");
               } else {
                 toast.info(`Please log in as Admin first to add ${role} accounts via dashboard.`);
               }
             }}
           >
-            {role === "admin" ? "Use default Admin credentials (ADM001)" : "How to get credentials?"}
+            {role === "admin"
+              ? "Use default Admin credentials (ADM001)"
+              : role === "pharmacy"
+              ? "Use Pharmacy demo credentials (PHARM01)"
+              : role === "billing"
+              ? "Use Billing demo credentials (BILL01)"
+              : "How to get credentials?"}
           </button>
         </div>
       </div>

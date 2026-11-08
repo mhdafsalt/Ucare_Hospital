@@ -37,7 +37,12 @@ const doctorSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-      isDeleted: {
+    status: {
+      type: String,
+      enum: ["Available", "Unavailable", "On Leave"],
+      default: "Available",
+    },
+    isDeleted: {
       type: Boolean,
       default: false,
     },

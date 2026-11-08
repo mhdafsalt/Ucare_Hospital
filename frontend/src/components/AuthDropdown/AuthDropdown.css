@@ -142,7 +142,8 @@
 .vital-popover-roles {
   display: flex;
   align-items: center;
-  gap: 6px;
+  flex-wrap: wrap;
+  gap: 5px;
   background: #f8fafc;
   padding: 4px;
   border-radius: 8px;
@@ -151,14 +152,15 @@
 }
 
 .vital-popover-role-pill {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 60px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 7px 10px;
+  gap: 5px;
+  padding: 6px 9px;
   border-radius: 6px;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 600;
   color: #475569;
   background: transparent;

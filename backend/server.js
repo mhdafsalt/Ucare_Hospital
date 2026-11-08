@@ -29,6 +29,16 @@ app.use("/api/appointments", require("./routes/appointments"));
 
 app.use("/api/receptionists", require("./routes/receptionists"));
 
+app.use("/api/pharmacists", require("./routes/pharmacistRoutes"));
+
+app.use("/api/billing-staff", require("./routes/billingStaffRoutes"));
+
+app.use("/api/pharmacy", require("./routes/medicineRoutes"));
+
+app.use("/api/billing", require("./routes/billingRoutes"));
+
+app.use("/api/admin", require("./routes/adminRoutes"));
+
 app.use("/api/supports", require("./routes/supportRoutes"));
 
 app.use("/api/auth", require("./routes/authRoutes"));

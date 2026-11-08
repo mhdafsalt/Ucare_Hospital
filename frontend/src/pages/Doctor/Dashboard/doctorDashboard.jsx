@@ -23,31 +23,7 @@ import {
 } from "react-icons/fa";
 
 import { getAppointmentsAPI, deleteAppointmentAPI, restoreAppointmentAPI, updateAppointmentAPI } from "../../../api/appointmentsApi";
-
-const menuItems = [
-    {
-        title: "MENU",
-        items: [
-            {
-                name: "Dashboard",
-                icon: <LayoutDashboard size={18} />,
-                path: "/doctor/dashboard",
-                active: true,
-            },
-          
-        ],
-    },
-    {
-        title: "SUPPORT",
-        items: [
-            {
-                name: "Help & Support",
-                icon: <HelpCircle size={18} />,
-                path: "/support",
-            },
-        ],
-    },
-];
+import { doctorMenu } from "../../../config/panelMenus";
 
 function DoctorDashboard() {
     const [appointments, setAppointments] = useState([]);
@@ -122,7 +98,7 @@ function DoctorDashboard() {
         <div className="app">
 
             {/* SIDEBAR */}
-            <Sidebar logo="Ucare." menuItems={menuItems} />
+            <Sidebar logo="Ucare." menuItems={doctorMenu} />
 
             {/* MAIN */}
             <main className="main">

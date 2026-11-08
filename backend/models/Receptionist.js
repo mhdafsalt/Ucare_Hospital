@@ -35,6 +35,12 @@ const receptionistSchema = new mongoose.Schema(
             required: true,
         },
 
+        status: {
+            type: String,
+            enum: ["Active", "Inactive"],
+            default: "Active",
+        },
+
         isDeleted: {
             type: Boolean,
             default: false,

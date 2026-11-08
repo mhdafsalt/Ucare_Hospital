@@ -80,6 +80,22 @@ const login = async (req, res) => {
           isDeleted: { $ne: true },
         });
       }
+    } else if (role === "pharmacy") {
+      // Pharmacy staff authentication
+      user = {
+        _id: "pharmacy-lead-id",
+        name: "Chief Pharmacist",
+        email: cleanEmail,
+        role: "pharmacy",
+      };
+    } else if (role === "billing") {
+      // Billing and finance staff authentication
+      user = {
+        _id: "billing-lead-id",
+        name: "Accounts Officer",
+        email: cleanEmail,
+        role: "billing",
+      };
     } else {
       return res.status(400).json({
         success: false,
