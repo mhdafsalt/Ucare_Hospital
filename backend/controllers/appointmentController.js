@@ -1,4 +1,5 @@
 const Appointment = require("../models/Appointment");
+const Patient = require("../models/Patient");
 
 /*Get All Appointments */
 const getAppointments = async (req, res) => {
@@ -10,7 +11,25 @@ const getAppointments = async (req, res) => {
       createdAt: -1,
     });
 
-    res.status(200).json(appointments);
+    const patients = await Patient.find({ isDeleted: false });
+    const patientMap = new Map();
+    patients.forEach((p) => {
+      const pId =
+        p.patientId ||
+        (p._id ? `PAT-${String(p._id).slice(-4).toUpperCase()}` : "");
+      if (p.name) patientMap.set(p.name.trim().toLowerCase(), pId);
+    });
+
+    const formattedAppointments = appointments.map((a) => {
+      const obj = a.toObject();
+      if (!obj.patientId && obj.patientName) {
+        const found = patientMap.get(obj.patientName.trim().toLowerCase());
+        if (found) obj.patientId = found;
+      }
+      return obj;
+    });
+
+    res.status(200).json(formattedAppointments);
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -29,7 +48,22 @@ const addAppointment = async (req, res) => {
       });
     }
 
-    const appointment = new Appointment(req.body);
+    const appointmentData = { ...req.body };
+    if (!appointmentData.patientId && appointmentData.patientName) {
+      const matchPat = await Patient.findOne({
+        name: {
+          $regex: new RegExp(`^${appointmentData.patientName.trim()}$`, "i"),
+        },
+        isDeleted: false,
+      });
+      if (matchPat) {
+        appointmentData.patientId =
+          matchPat.patientId ||
+          `PAT-${String(matchPat._id).slice(-4).toUpperCase()}`;
+      }
+    }
+
+    const appointment = new Appointment(appointmentData);
     const savedAppointment = await appointment.save();
 
     res.status(201).json(savedAppointment);

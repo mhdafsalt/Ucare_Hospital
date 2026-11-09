@@ -189,7 +189,7 @@ function AddPharmacist() {
       <main className="main main-wrapper">
         {/* HEADER */}
         <div className="staff-header-row">
-          <div>
+          <div className="staff-header-info">
             <h1 className="staff-page-title">Pharmacist Management</h1>
             <p className="staff-page-subtitle">
               Manage clinical pharmacy specialists, shifts, license numbers, and system access.

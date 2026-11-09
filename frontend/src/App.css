@@ -32,10 +32,16 @@
   background-size: 100% 100%, 64px 64px, 64px 64px;
   background-position: 0 0, -1px -1px, -1px -1px;
   position: relative;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 .main {
   flex: 1;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
   margin-left: 270px;
   padding: 24px 30px;
   min-height: 100vh;
@@ -43,12 +49,27 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  box-sizing: border-box;
 }
 
 @media (max-width: 992px) {
   .main {
     margin-left: 0;
+    width: 100%;
+    max-width: 100vw;
     padding: 20px 16px;
     padding-top: 86px;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 480px) {
+  .main {
+    margin-left: 0;
+    width: 100%;
+    max-width: 100vw;
+    padding: 14px 12px;
+    padding-top: 82px;
+    box-sizing: border-box;
   }
 }

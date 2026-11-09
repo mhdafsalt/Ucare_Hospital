@@ -201,7 +201,7 @@ function AddDoctors() {
       <main className="main main-wrapper admin-main-canvas">
         {/* HEADER */}
         <div className="staff-header-row">
-          <div>
+          <div className="staff-header-info">
             <h1 className="staff-page-title">Doctor Management</h1>
             <p className="staff-page-subtitle">
               Manage hospital physicians, clinical specialties, consulting hours, and medical staff records.

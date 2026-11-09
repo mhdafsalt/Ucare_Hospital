@@ -54,12 +54,23 @@ function Appointments() {
         notes: "",
     });
 
+    const [registeredPatients, setRegisteredPatients] = useState([]);
+
     // ================= FETCH =================
     const fetchAppointments = async () => {
         try {
             setLoading(true);
-            const res = await getAppointmentsAPI(showDeleted);
-            setAppointments(res.data || []);
+            const [appRes, patRes] = await Promise.all([
+                getAppointmentsAPI(showDeleted),
+                getPatientsAPI(false).catch(() => ({ data: { patients: [] } })),
+            ]);
+            setAppointments(appRes.data || []);
+            const rawPats = Array.isArray(patRes.data?.patients)
+                ? patRes.data.patients
+                : Array.isArray(patRes.data)
+                ? patRes.data
+                : [];
+            setRegisteredPatients(rawPats);
         } catch (err) {
             console.log(err);
         } finally {
@@ -411,12 +422,27 @@ function Appointments() {
                                         <div className="form-group">
                                             <label>Patient Name *</label>
                                             <input
+                                                list="registered-patients-datalist"
                                                 name="patientName"
                                                 placeholder="e.g. John Doe"
                                                 onChange={handleChange}
                                                 value={formData.patientName}
                                                 required
                                             />
+                                            <datalist id="registered-patients-datalist">
+                                                {registeredPatients.map((p) => {
+                                                    const pId =
+                                                        p.patientId ||
+                                                        (p._id
+                                                            ? `PAT-${String(p._id).slice(-4).toUpperCase()}`
+                                                            : "");
+                                                    return (
+                                                        <option key={p._id || p.name} value={p.name}>
+                                                            {p.name} {pId ? `(${pId})` : ""}
+                                                        </option>
+                                                    );
+                                                })}
+                                            </datalist>
                                         </div>
 
                                         <div className="form-group">
@@ -549,7 +575,20 @@ function Appointments() {
                                 </thead>
 
                                 <tbody>
-                                    {filteredAppointments.map((a) => (
+                                    {filteredAppointments.map((a) => {
+                                        const matchPat = registeredPatients.find(
+                                            (p) =>
+                                                p.name?.trim().toLowerCase() ===
+                                                a.patientName?.trim().toLowerCase()
+                                        );
+                                        const patId =
+                                            a.patientId ||
+                                            matchPat?.patientId ||
+                                            (matchPat?._id
+                                                ? `PAT-${String(matchPat._id).slice(-4).toUpperCase()}`
+                                                : "");
+
+                                        return (
                                         <tr key={a._id}>
                                             {/* PATIENT INFO */}
                                             <td className="patient-info-cell">
@@ -575,11 +614,18 @@ function Appointments() {
                                                     <div className="patient-name">
                                                         {a.patientName}
                                                     </div>
-                                                    {a.notes && (
-                                                        <span style={{ fontSize: "11.5px", color: "#64748b", maxWidth: "200px", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={a.notes}>
-                                                            {a.notes}
-                                                        </span>
-                                                    )}
+                                                    <div style={{ display: "flex", gap: "6px", alignItems: "center", marginTop: "2px" }}>
+                                                        {patId && (
+                                                            <span style={{ fontSize: "11px", fontWeight: "700", color: "#0284c7", background: "#e0f2fe", padding: "1px 6px", borderRadius: "4px" }}>
+                                                                {patId}
+                                                            </span>
+                                                        )}
+                                                        {a.notes && (
+                                                            <span style={{ fontSize: "11.5px", color: "#64748b", maxWidth: "180px", display: "inline-block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={a.notes}>
+                                                                {a.notes}
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </td>
 
@@ -644,7 +690,8 @@ function Appointments() {
                                                 )}
                                             </td>
                                         </tr>
-                                    ))}
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         )}

@@ -229,13 +229,7 @@ function Home() {
             {/* WIDGET 2: CENTER TYPOGRAPHY STATEMENT (NO BORDER) */}
             <div className="vital-dock-col vital-center-col">
               <p className="vital-hero-statement">
-                Expert dental care for healthy,
-                <br />
-                confident smiles at every age—
-                <br />
-                delivered with comfort, precision,
-                <br />
-                and trust.
+              Your Health, Our Priority — Delivering Quality Care with Compassion, Excellence, and Trust.
               </p>
             </div>
 

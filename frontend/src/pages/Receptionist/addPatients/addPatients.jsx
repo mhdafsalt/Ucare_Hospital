@@ -505,6 +505,7 @@ function AddPatients() {
                             <table className="patients-table">
                                 <thead>
                                     <tr>
+                                        <th>Patient ID</th>
                                         <th>Patient</th>
                                         <th>Age</th>
                                         <th>Gender</th>
@@ -515,8 +516,21 @@ function AddPatients() {
                                 </thead>
 
                                 <tbody>
-                                    {filteredPatients.map((patient) => (
+                                    {filteredPatients.map((patient) => {
+                                        const patId =
+                                            patient.patientId ||
+                                            (patient._id
+                                                ? `PAT-${String(patient._id).slice(-4).toUpperCase()}`
+                                                : "PAT-001");
+                                        return (
                                         <tr key={patient._id}>
+                                            {/* PATIENT ID */}
+                                            <td>
+                                                <strong style={{ color: "#0f172a", fontWeight: "700" }}>
+                                                    {patId}
+                                                </strong>
+                                            </td>
+
                                             {/* PATIENT INFO */}
                                             <td className="patient-info-cell">
                                                 <div className="patient-avatar">
@@ -541,8 +555,8 @@ function AddPatients() {
                                                     <div className="patient-name">
                                                         {patient.name}
                                                     </div>
-                                                    <span style={{ fontSize: "11px", color: "#64748b" }}>
-                                                        ID: #{patient._id?.slice(-6).toUpperCase()}
+                                                    <span style={{ fontSize: "11px", color: "#0ea5e9", fontWeight: "600" }}>
+                                                        {patId}
                                                     </span>
                                                 </div>
                                             </td>
@@ -607,7 +621,8 @@ function AddPatients() {
                                                 )}
                                             </td>
                                         </tr>
-                                    ))}
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         )}

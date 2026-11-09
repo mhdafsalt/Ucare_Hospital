@@ -8,12 +8,24 @@
 /* Table Container Card */
 .patients-table-container {
   width: 100%;
+  max-width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   margin-top: 18px;
   border-radius: 16px;
   border: 1px solid #e2e8f0;
   background: #ffffff;
   box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+  scrollbar-width: thin;
+}
+
+.patients-table-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.patients-table-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 6px;
 }
 
 /* Table Card Header Toolbar */
@@ -52,6 +64,7 @@
 /* Modern Data Table */
 .patients-table {
   width: 100%;
+  min-width: 720px;
   border-collapse: collapse;
   text-align: left;
 }

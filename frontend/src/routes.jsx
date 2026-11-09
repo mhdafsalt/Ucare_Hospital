@@ -128,7 +128,11 @@ function AppRoutes() {
       />
       <Route
         path="/admin/pharmacy"
-        element={<Navigate to="/pharmacy/dashboard" replace />}
+        element={
+          <ProtectedRoute role="admin">
+            <PharmacyPanel />
+          </ProtectedRoute>
+        }
       />
       <Route
         path="/admin/billing"

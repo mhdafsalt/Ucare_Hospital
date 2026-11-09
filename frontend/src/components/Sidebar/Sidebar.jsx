@@ -45,7 +45,7 @@ function Sidebar({ menuItems = [], logo = "Ucare Hospital", panelSubtitle = "" }
       <div className="mobile-topbar">
         <div className="mobile-brand" onClick={() => navigate("/")}>
           <div className="sidebar-logo-symbol" style={{ width: 34, height: 34 }}>
-            <img src="./images/favicon.png" alt="Ucare Logo" />
+            <img src="/images/favicon.png" alt="Ucare Logo" onError={(e) => { e.target.style.display = 'none'; }} />
           </div>
           <div className="brand-text-col">
             <span className="mobile-brand-name">Ucare</span>
@@ -76,7 +76,7 @@ function Sidebar({ menuItems = [], logo = "Ucare Hospital", panelSubtitle = "" }
         <div className="sidebar-brand-box" onClick={() => navigate("/")}>
           <div className="sidebar-brand">
             <div className="sidebar-logo-symbol">
-              <img src="./images/favicon.png" alt="Ucare Logo" />
+              <img src="/images/favicon.png" alt="Ucare Logo" onError={(e) => { e.target.style.display = 'none'; }} />
             </div>
             <div className="brand-text-col">
               <span className="brand-title">Ucare</span>

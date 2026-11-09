@@ -21,7 +21,7 @@
 /* NAVBAR CUSTOM */
 .navbar-custom {
   position: relative;
-  z-index: 1050;
+  z-index: 40;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -510,6 +510,15 @@
   color: #ef4444;
 }
 
+.btn-action-icon.text-blue {
+  color: #0284c7;
+}
+
+.btn-action-icon.text-blue:hover {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
 /* MODAL STYLING */
 .admin-modal-backdrop {
   position: fixed;
@@ -519,7 +528,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 2000;
   padding: 20px;
 }
 
@@ -732,28 +741,276 @@
   font-weight: 500;
 }
 
-@media (max-width: 1100px) {
-  .pharmacy-landscape-grid {
-    grid-template-columns: repeat(2, 1fr);
+/* ==========================================================================
+   LIVE CLINICAL HUB SYNC BADGE & EMPTY QUEUE
+   ========================================================================== */
+.live-sync-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: pulse-green 1.8s infinite;
+}
+
+@keyframes pulse-green {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
   }
-  .col-span-2 {
-    grid-column: span 1;
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
   }
 }
 
-@media (max-width: 680px) {
+.pharmacy-empty-queue {
+  padding: 36px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fafaf9;
+  border-radius: 12px;
+  margin: 16px 20px 24px 20px;
+  border: 1px dashed #e2e8f0;
+}
+
+.pharmacy-empty-queue p {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 6px;
+}
+
+.pharmacy-empty-queue span {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   COMPLETE RESPONSIVE DESIGN SYSTEM
+   ========================================================================== */
+
+/* Tablets & Small Laptops (max-width: 1024px) */
+@media (max-width: 1024px) {
+  .admin-main-canvas {
+    padding: 20px 20px 48px 20px;
+  }
+
+  .spark-grid-top {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pharmacy-landscape-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .col-span-2 {
+    grid-column: span 2;
+  }
+
+  .col-span-3 {
+    grid-column: span 2;
+  }
+}
+
+/* Mobile & Phablet Devices (max-width: 768px) */
+@media (max-width: 768px) {
+  .admin-main-canvas {
+    padding: 16px 14px 40px 14px;
+  }
+
+  /* Top Navigation Bar Stacking */
+  .navbar-custom {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 14px;
+  }
+
+  .navbar-left {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .navbar-search-wrapper {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .navbar-actions {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .navbar-actions .btn-quick-action {
+    flex: 1;
+    justify-content: center;
+  }
+
+  /* Page Header */
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .page-header .btn-quick-action {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  /* Card Header Stacking & Filter Pills Scrolling */
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .card-header > div:first-child {
+    width: 100%;
+  }
+
+  .filter-pill-group {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+    padding-top: 2px;
+    scrollbar-width: thin;
+  }
+
+  .filter-btn-pill {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* Table Smooth Scrolling */
+  .pharmacy-table {
+    min-width: 760px;
+  }
+
+  /* Landscape Forms */
   .pharmacy-form-landscape {
     padding: 20px 16px;
+    gap: 16px;
   }
+
   .pharmacy-landscape-grid {
     grid-template-columns: 1fr;
+    gap: 14px;
   }
+
   .col-span-2,
-  .col-span-3 {
-    grid-column: span 1;
+  .col-span-3,
+  .col-span-full {
+    grid-column: 1 / -1;
   }
+
   .landscape-actions-bar {
     flex-direction: column;
     align-items: stretch;
+    gap: 12px;
+  }
+
+  .landscape-actions-bar .btn-quick-action {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Add Medicine Modal */
+  .admin-modal-content {
+    width: 95%;
+    max-width: 100%;
+    margin: 10px;
+  }
+
+  .pharmacy-form {
+    padding: 16px;
+  }
+
+  .pharmacy-form .form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+/* Small Smart Phones (max-width: 480px) */
+@media (max-width: 480px) {
+  .admin-main-canvas {
+    padding: 12px 10px 36px 10px;
+  }
+
+  .spark-grid-top {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .card-stat {
+    padding: 16px;
+  }
+
+  .stat-value {
+    font-size: 24px;
+  }
+
+  .page-title {
+    font-size: 20px;
+  }
+
+  .navbar-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .navbar-actions .admin-chip {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .btn-pay-now {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  .modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .modal-actions button {
+    width: 100%;
+    justify-content: center;
   }
 }

@@ -184,13 +184,13 @@ function AddBillingStaff() {
   );
 
   return (
-    <div className="app spark-theme">
+    <div className="app spark-theme white-grid-layout">
       <Sidebar menuItems={adminMenu} />
 
-      <main className="main main-wrapper">
+      <main className="main main-wrapper admin-main-canvas">
         {/* HEADER */}
         <div className="staff-header-row">
-          <div>
+          <div className="staff-header-info">
             <h1 className="staff-page-title">Billing Staff Management</h1>
             <p className="staff-page-subtitle">
               Manage hospital billing officers, finance specialists, revenue clerks, and accounts access.

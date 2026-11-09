@@ -196,7 +196,7 @@ function AddReceptionist() {
       <main className="main main-wrapper admin-main-canvas">
         {/* HEADER */}
         <div className="staff-header-row">
-          <div>
+          <div className="staff-header-info">
             <h1 className="staff-page-title">Receptionist Management</h1>
             <p className="staff-page-subtitle">
               Manage front-desk coordinators, admission desks, customer service shifts, and staff credentials.

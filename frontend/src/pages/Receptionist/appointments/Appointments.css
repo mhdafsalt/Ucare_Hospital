@@ -107,12 +107,30 @@
 
 @media (max-width: 768px) {
   .appointment-filters {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+    padding-bottom: 6px;
     gap: 8px;
+    scrollbar-width: thin;
+    width: 100%;
+  }
+
+  .appointment-filters::-webkit-scrollbar {
+    height: 3px;
+  }
+
+  .appointment-filters::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
   }
 
   .filter-btn,
   .filter-active {
     font-size: 12px;
     padding: 6px 14px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 }

@@ -21,7 +21,7 @@
 /* NAVBAR CUSTOM */
 .navbar-custom {
   position: relative;
-  z-index: 1050;
+  z-index: 40;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -518,10 +518,12 @@
 .table-responsive {
   width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .billing-table {
   width: 100%;
+  min-width: 820px;
   border-collapse: separate;
   border-spacing: 0;
   font-size: 13.5px;
@@ -631,4 +633,162 @@
 .btn-action-icon:hover {
   background: #f1f5f9;
   color: #0f172a;
+}
+
+.btn-action-icon.text-danger:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.btn-action-icon.text-blue {
+  color: #0284c7;
+}
+
+.btn-action-icon.text-blue:hover {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN SYSTEM FOR BILLING PANEL
+   ========================================================================== */
+
+/* Tablets & Small Laptops (max-width: 1024px) */
+@media (max-width: 1024px) {
+  .admin-main-canvas {
+    padding: 20px 20px 48px 20px;
+  }
+
+  .spark-grid-top {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .report-breakdown-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile & Phablets (max-width: 768px) */
+@media (max-width: 768px) {
+  .admin-main-canvas {
+    padding: 16px 14px 40px 14px;
+  }
+
+  .navbar-custom {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 14px;
+  }
+
+  .navbar-left {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .navbar-search-wrapper {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .navbar-actions {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .navbar-actions .btn-quick-action {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .admin-subview-tabs {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+  }
+
+  .btn-subview-tab {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .filter-pill-group {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+  }
+
+  .filter-btn-pill {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .report-breakdown-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .admin-modal-content {
+    width: 95%;
+    max-width: 100%;
+    margin: 10px;
+  }
+
+  .pharmacy-form .form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+/* Small Smart Phones (max-width: 480px) */
+@media (max-width: 480px) {
+  .admin-main-canvas {
+    padding: 12px 10px 36px 10px;
+  }
+
+  .spark-grid-top {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .stat-value {
+    font-size: 24px;
+  }
+
+  .page-title {
+    font-size: 20px;
+  }
+
+  .navbar-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .navbar-actions .admin-chip {
+    width: 100%;
+    justify-content: center;
+  }
 }

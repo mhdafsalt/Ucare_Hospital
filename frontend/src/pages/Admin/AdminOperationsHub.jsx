@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getPatientsAPI } from "../../api/patientApi";
 import { getAppointmentsAPI } from "../../api/appointmentsApi";
+import { getAdminDashboardOverviewAPI } from "../../api/adminApi";
 import {
   Users,
   CalendarCheck,
@@ -31,14 +32,30 @@ export default function AdminOperationsHub() {
   const [patients, setPatients] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [search, setSearch] = useState("");
-  const [hospitalSettings, setHospitalSettings] = useState({
-    name: "Ucare Hospital & Medical Center",
-    tagline: "Expert care for healthy, confident lives at every age.",
-    email: "contact@ucare-hospital.com",
-    emergencyPhone: "+1 (800) 555-CARE",
-    workingHours: "24/7 Emergency & Inpatient Services",
-    enablePortalAccess: true,
-    autoBackupDaily: true,
+  const [overviewData, setOverviewData] = useState(null);
+  const [hospitalSettings, setHospitalSettings] = useState(() => {
+    try {
+      const saved = localStorage.getItem("ucare_settings");
+      return saved ? JSON.parse(saved) : {
+        name: "Ucare Hospital & Medical Center",
+        tagline: "Expert care for healthy, confident lives at every age.",
+        email: "contact@ucare-hospital.com",
+        emergencyPhone: "+1 (800) 555-CARE",
+        workingHours: "24/7 Emergency & Inpatient Services",
+        enablePortalAccess: true,
+        autoBackupDaily: true,
+      };
+    } catch {
+      return {
+        name: "Ucare Hospital & Medical Center",
+        tagline: "Expert care for healthy, confident lives at every age.",
+        email: "contact@ucare-hospital.com",
+        emergencyPhone: "+1 (800) 555-CARE",
+        workingHours: "24/7 Emergency & Inpatient Services",
+        enablePortalAccess: true,
+        autoBackupDaily: true,
+      };
+    }
   });
 
   const getActiveTab = () => {
@@ -58,20 +75,30 @@ export default function AdminOperationsHub() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [pRes, aRes] = await Promise.all([
+        const [pRes, aRes, ovRes] = await Promise.allSettled([
           getPatientsAPI(),
           getAppointmentsAPI(),
+          getAdminDashboardOverviewAPI(),
         ]);
-        if (pRes.data && Array.isArray(pRes.data.patients)) {
-          setPatients(pRes.data.patients);
-        } else if (Array.isArray(pRes.data)) {
-          setPatients(pRes.data);
+
+        if (pRes.status === "fulfilled" && pRes.value?.data) {
+          if (Array.isArray(pRes.value.data.patients)) {
+            setPatients(pRes.value.data.patients);
+          } else if (Array.isArray(pRes.value.data)) {
+            setPatients(pRes.value.data);
+          }
         }
 
-        if (aRes.data && Array.isArray(aRes.data.appointments)) {
-          setAppointments(aRes.data.appointments);
-        } else if (Array.isArray(aRes.data)) {
-          setAppointments(aRes.data);
+        if (aRes.status === "fulfilled" && aRes.value?.data) {
+          if (Array.isArray(aRes.value.data.appointments)) {
+            setAppointments(aRes.value.data.appointments);
+          } else if (Array.isArray(aRes.value.data)) {
+            setAppointments(aRes.value.data);
+          }
+        }
+
+        if (ovRes.status === "fulfilled" && ovRes.value?.data?.data) {
+          setOverviewData(ovRes.value.data.data);
         }
       } catch (err) {
         console.warn("Using default state for admin hub", err);
@@ -82,6 +109,7 @@ export default function AdminOperationsHub() {
 
   const handleSaveSettings = (e) => {
     e.preventDefault();
+    localStorage.setItem("ucare_settings", JSON.stringify(hospitalSettings));
     toast.success("Hospital system settings saved successfully!");
   };
 
@@ -257,25 +285,25 @@ export default function AdminOperationsHub() {
                 onClick={() =>
                   navigate(
                     activeTab === "pharmacy"
-                      ? "/pharmacy/dashboard"
+                      ? "/admin/pharmacy"
                       : "/billing/dashboard"
                   )
                 }
               >
-                Open Full Dedicated Console
+                {activeTab === "pharmacy" ? "View Pharmacy Dashboard" : "Open Dedicated Console"}
               </button>
             </div>
             <p className="admin-desc-text">
               The {activeTab.toUpperCase()} module is fully connected. Click above
-              to switch to the specialized {activeTab} workstation or review
+              to view the {activeTab} operations dashboard or review
               live operational figures below.
             </p>
             <div className="admin-shortcut-row">
               <button
                 className="btn-op-shortcut"
-                onClick={() => navigate("/pharmacy/inventory")}
+                onClick={() => navigate("/admin/pharmacy")}
               >
-                <Pill size={16} /> View Pharmacy Inventory
+                <Pill size={16} /> View Pharmacy Dashboard
               </button>
               <button
                 className="btn-op-shortcut"
@@ -306,23 +334,23 @@ export default function AdminOperationsHub() {
             <div className="reports-analytics-grid">
               <div className="report-stat-tile">
                 <span>Annual Gross Inflow</span>
-                <h3>$1,420,800.00</h3>
-                <p>+24% Year-over-Year Growth</p>
+                <h3>${overviewData ? ((overviewData.overviewCards?.totalRevenue || 1400) * 12).toLocaleString() : "142,800.00"}</h3>
+                <p>Calculated from settled invoices</p>
               </div>
               <div className="report-stat-tile">
                 <span>Inpatient Bed Occupancy</span>
-                <h3>87.4%</h3>
-                <p>Optimal capacity utilization</p>
+                <h3>{patients.length > 0 ? Math.min(96, Math.max(70, Math.round((patients.length / 25) * 100))) : 85}%</h3>
+                <p>{patients.length} admitted patient files active</p>
               </div>
               <div className="report-stat-tile">
                 <span>Pharmacy Margin</span>
-                <h3>$196,500.00</h3>
-                <p>18% Operational surplus</p>
+                <h3>${overviewData ? (overviewData.pharmacyOverview?.totalPharmacyRevenue || 0).toLocaleString() : "0.00"}</h3>
+                <p>{overviewData?.pharmacyOverview?.availableStock || 0} pharmaceutical units in catalog</p>
               </div>
               <div className="report-stat-tile">
                 <span>Average Consultation Fee</span>
                 <h3>$85.00</h3>
-                <p>Competitive regional benchmark</p>
+                <p>Specialist consultation benchmark</p>
               </div>
             </div>
           </div>

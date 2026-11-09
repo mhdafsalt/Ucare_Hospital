@@ -533,38 +533,44 @@ input, select, textarea {
   width: 100% !important;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1360px) {
   .spark-grid-top {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .spark-grid-top {
     grid-template-columns: 1fr !important;
   }
 }
 
 /* ==========================================================================
-   GLOBAL HIGH Z-INDEX NAVBAR & DROPDOWN STACKING FIX
-   Guarantees dropdown menus always appear above all cards, tables, and headers
+   GLOBAL PROPER Z-INDEX HIERARCHY
+   - Normal content/cards: z-index 1-10
+   - In-page navbars & topbars: z-index 40
+   - In-page dropdown menus: z-index 60
+   - Mobile topbar: z-index 1400
+   - Mobile sidebar drawer: z-index 1380
+   - Mobile overlay backdrop: z-index 1350
+   - Modals & dialogs: z-index 2000
    ========================================================================== */
 .navbar-custom,
 .doctors-topbar {
   position: relative;
-  z-index: 1050 !important;
+  z-index: 40 !important;
 }
 
 .action-dropdown-wrapper {
   position: relative;
-  z-index: 1060 !important;
+  z-index: 50 !important;
 }
 
 .dropdown-menu-custom,
 .profile-dropdown,
 .notification-dropdown {
   position: absolute;
-  z-index: 1070 !important;
+  z-index: 60 !important;
   box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(15, 23, 42, 0.08) !important;
 }
 

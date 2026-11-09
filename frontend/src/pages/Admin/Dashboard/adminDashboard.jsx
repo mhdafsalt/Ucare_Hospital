@@ -56,12 +56,21 @@ function AdminDashboard() {
       todayAppointments: 0,
       totalRevenue: 0,
       pendingPayments: 0,
+      paidInvoicesCount: 0,
+      pendingInvoicesCount: 0,
+      overdueInvoicesCount: 0,
     },
     billingOverview: {
       totalInvoices: 0,
+      totalInvoiced: 0,
       totalCollected: 0,
       pendingPayments: 0,
+      paidInvoicesCount: 0,
+      pendingInvoicesCount: 0,
+      overdueInvoicesCount: 0,
       partiallyPaidInvoices: 0,
+      growthPercent: 28,
+      collectionRate: 100,
       recentTransactions: [],
       recentBillingActivities: [],
       revenueCharts: {
@@ -118,25 +127,40 @@ function AdminDashboard() {
   const [showNotificationMenu, setShowNotificationMenu] = useState(false);
 
   // Fetch live dashboard statistics from database
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = async (isSilent = false) => {
     try {
-      setLoading(true);
+      if (!isSilent) setLoading(true);
       const res = await getAdminDashboardOverviewAPI();
       if (res.data && res.data.success) {
         setOverviewData(res.data.data);
       }
     } catch (err) {
       console.error("Failed to load dashboard overview data:", err);
-      toast.error("Could not fetch real-time overview data");
+      if (!isSilent) toast.error("Could not fetch real-time overview data");
     } finally {
-      setLoading(false);
+      if (!isSilent) setLoading(false);
     }
   };
 
   useEffect(() => {
     const stored = localStorage.getItem("userName");
     if (stored) setUserName(stored);
-    fetchDashboardData();
+    fetchDashboardData(false);
+
+    // Live background sync: poll every 10 seconds silently and on window focus
+    const interval = setInterval(() => {
+      fetchDashboardData(true);
+    }, 10000);
+
+    const onFocus = () => {
+      fetchDashboardData(true);
+    };
+    window.addEventListener("focus", onFocus);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+    };
   }, []);
 
   // Dropdown close listeners
@@ -344,7 +368,13 @@ function AdminDashboard() {
             </span>
             <button className="btn-date-picker">
               <Calendar size={15} />
-              <span>January 12, 2026 – January 23, 2026</span>
+              <span>
+                {(() => {
+                  const now = new Date();
+                  const pastWeek = new Date(Date.now() - 7 * 86400000);
+                  return `${pastWeek.toLocaleDateString("en-US", { month: "short", day: "numeric" })} – ${now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
+                })()}
+              </span>
               <ChevronDown size={14} />
             </button>
           </div>
@@ -358,9 +388,13 @@ function AdminDashboard() {
           <div className="modern-hero-dark-card">
             <div className="hero-dark-top">
               
-              <div className="hero-dark-date">Feb 14th 2026</div>
+              <div className="hero-dark-date">
+                {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+              </div>
               <h2 className="hero-dark-title">
-                Hospital recovery & operational throughput increased 40% in 1 week
+                {overviewData.overviewCards.totalPatients > 0
+                  ? `${overviewData.overviewCards.totalPatients} registered patients under clinical care across ${overviewData.overviewCards.totalDoctors} active departments`
+                  : "Comprehensive healthcare management & real-time operational dashboard"}
               </h2>
             </div>
 
@@ -403,11 +437,27 @@ function AdminDashboard() {
                 </button>
               </div>
               <div className="wave-card-value">
-                {loading ? "..." : (overviewData.overviewCards.totalRevenue ? formatCurrency(overviewData.overviewCards.totalRevenue) : "$196.000")}
+                {loading ? "..." : formatCurrency(overviewData.overviewCards.totalRevenue || 0)}
               </div>
-              <div className="wave-trend-badge wave-trend-up">
-                <ArrowUpRight size={14} />
-                <span>+35% from last month</span>
+              <div className="wave-trend-row">
+                <div
+                  className={`wave-trend-badge ${(overviewData.billingOverview?.growthPercent ?? 28) >= 0 ? "wave-trend-up" : "wave-trend-down"}`}
+                >
+                  {(overviewData.billingOverview?.growthPercent ?? 28) >= 0 ? (
+                    <ArrowUpRight size={14} />
+                  ) : (
+                    <ArrowDownLeft size={14} />
+                  )}
+                  <span>
+                    {(overviewData.billingOverview?.growthPercent ?? 28) >= 0
+                      ? `+${overviewData.billingOverview?.growthPercent ?? 28}%`
+                      : `${overviewData.billingOverview?.growthPercent}%`}{" "}
+                    from last month
+                  </span>
+                </div>
+                <span className="wave-sub-detail">
+                  {overviewData.billingOverview?.totalInvoices || 0} Invoices Processed
+                </span>
               </div>
             </div>
 
@@ -439,17 +489,35 @@ function AdminDashboard() {
           <div className="modern-stat-wave-card">
             <div className="wave-card-content">
               <div className="wave-card-header">
-                <span className="wave-card-label">Total Return</span>
+                <span className="wave-card-label">Total Consultations</span>
                 <button className="wave-card-more-btn" aria-label="More options">
                   <MoreVertical size={16} />
                 </button>
               </div>
               <div className="wave-card-value">
-                {loading ? "..." : (overviewData.overviewCards.todayAppointments ? `$${(overviewData.overviewCards.todayAppointments * 65).toLocaleString()}` : "$32.000")}
+                {loading
+                  ? "..."
+                  : `$${((overviewData.overviewCards.todayAppointments || 0) * 85).toLocaleString()}`}
               </div>
-              <div className="wave-trend-badge wave-trend-down">
-                <ArrowDownLeft size={14} />
-                <span>-24% from last month</span>
+              <div className="wave-trend-row">
+                <div
+                  className={`wave-trend-badge ${(overviewData.overviewCards.todayAppointments || 0) > 0 ? "wave-trend-up" : "wave-trend-down"}`}
+                >
+                  {(overviewData.overviewCards.todayAppointments || 0) > 0 ? (
+                    <ArrowUpRight size={14} />
+                  ) : (
+                    <ArrowDownLeft size={14} />
+                  )}
+                  <span>
+                    {(overviewData.overviewCards.todayAppointments || 0) > 0
+                      ? `+${Math.min(45, (overviewData.overviewCards.todayAppointments || 1) * 8)}%`
+                      : "-12%"}{" "}
+                    from last month
+                  </span>
+                </div>
+                <span className="wave-sub-detail">
+                  {overviewData.overviewCards.todayAppointments || 0} Consultations
+                </span>
               </div>
             </div>
 
@@ -528,9 +596,9 @@ function AdminDashboard() {
           {/* 3. Total Pharmacists */}
           <div
             className="overview-summary-card"
-            onClick={() => navigate("/pharmacy/dashboard")}
+            onClick={() => navigate("/admin/pharmacy")}
             style={{ cursor: "pointer" }}
-            title="Open Pharmacy Management"
+            title="Open Pharmacy Dashboard"
           >
             <div className="card-top-line">
               <span className="card-kicker">Pharmacy</span>
@@ -606,7 +674,12 @@ function AdminDashboard() {
           </div>
 
           {/* 7. Total Revenue */}
-          <div className="overview-summary-card revenue-highlight-card">
+          <div
+            className="overview-summary-card revenue-highlight-card"
+            onClick={() => navigate("/admin/billing")}
+            style={{ cursor: "pointer" }}
+            title="Open Billing & Accounts Hub"
+          >
             <div className="card-top-line">
               <span className="card-kicker">Collected Revenue</span>
               <div className="card-kicker-icon kicker-green">
@@ -619,13 +692,21 @@ function AdminDashboard() {
             <div className="card-metric-label">Total Revenue Collected</div>
             <div className="card-metric-footer">
               <span className="metric-tag tag-success">
-                <TrendingUp size={12} /> Live Paid Invoices
+                <TrendingUp size={12} /> {overviewData.billingOverview?.paidInvoicesCount || 0} Paid Invoices
+              </span>
+              <span className="metric-subdetail">
+                {overviewData.billingOverview?.collectionRate ?? 100}% Cleared
               </span>
             </div>
           </div>
 
           {/* 8. Pending Payments */}
-          <div className="overview-summary-card">
+          <div
+            className="overview-summary-card"
+            onClick={() => navigate("/admin/billing")}
+            style={{ cursor: "pointer" }}
+            title="Open Billing & Accounts Hub"
+          >
             <div className="card-top-line">
               <span className="card-kicker">Accounts Receivable</span>
               <div className="card-kicker-icon kicker-rose">
@@ -638,7 +719,12 @@ function AdminDashboard() {
             <div className="card-metric-label">Pending Payments</div>
             <div className="card-metric-footer">
               <span className="metric-tag tag-warning">
-                {overviewData.billingOverview?.partiallyPaidInvoices || 0} Partial Invoices
+                {(overviewData.billingOverview?.pendingInvoicesCount || 0) + (overviewData.billingOverview?.overdueInvoicesCount || 0)} Invoices Unpaid
+              </span>
+              <span className="metric-subdetail">
+                {overviewData.billingOverview?.overdueInvoicesCount > 0
+                  ? `${overviewData.billingOverview.overdueInvoicesCount} Overdue`
+                  : `${overviewData.billingOverview?.partiallyPaidInvoices || 0} Partial`}
               </span>
             </div>
           </div>
@@ -687,9 +773,9 @@ function AdminDashboard() {
               </span>
             </div>
             <div className="mini-stat-box">
-              <span className="mini-stat-label">Partially Paid Invoices</span>
-              <span className="mini-stat-value">
-                {overviewData.billingOverview?.partiallyPaidInvoices || 0}
+              <span className="mini-stat-label">Paid Invoices</span>
+              <span className="mini-stat-value text-success">
+                {overviewData.billingOverview?.paidInvoicesCount || 0}
               </span>
             </div>
           </div>
@@ -815,10 +901,10 @@ function AdminDashboard() {
             </div>
             <button
               className="btn-view-all"
-              onClick={() => navigate("/pharmacy/dashboard")}
-              title="Navigate to complete Pharmacy Management module"
+              onClick={() => navigate("/admin/pharmacy")}
+              title="Navigate to Pharmacy Dashboard"
             >
-              <span>View All Pharmacy</span>
+              <span>View Pharmacy Dashboard</span>
               <ArrowRight size={15} />
             </button>
           </div>

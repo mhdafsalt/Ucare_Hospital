@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const patientSchema = new mongoose.Schema(
   {
+    patientId: {
+      type: String,
+      trim: true,
+    },
     name: {
       type: String,
       required: true,

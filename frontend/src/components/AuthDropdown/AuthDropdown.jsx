@@ -59,14 +59,27 @@ function AuthDropdown({ isOpen, onClose, placement = "right" }) {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    const newErrors = {
-      userId: !userId.trim() && !email.trim(),
-      email: !email.trim() && !userId.trim(),
-    };
+    const hasUserId = Boolean(userId.trim());
+    const hasEmail = Boolean(email.trim());
 
-    if (!userId.trim() && !email.trim()) {
-      setErrors({ userId: true, email: true });
-      toast.error("Please enter your User ID or Email address.");
+    if (!hasUserId || !hasEmail) {
+      setErrors({
+        userId: !hasUserId,
+        email: !hasEmail,
+      });
+      if (!hasUserId && !hasEmail) {
+        toast.error("Please enter both your User ID and Email address.");
+      } else if (!hasUserId) {
+        toast.error("Please enter your User ID.");
+      } else {
+        toast.error("Please enter your registered Email address.");
+      }
+      return;
+    }
+
+    if (!email.includes("@")) {
+      setErrors({ userId: false, email: true });
+      toast.error("Please enter a valid email address.");
       return;
     }
 
@@ -75,7 +88,10 @@ function AuthDropdown({ isOpen, onClose, placement = "right" }) {
     try {
       setLoading(true);
 
-      const res = await loginAPI({ userId: userId.trim(), email: email.trim() });
+      const res = await loginAPI({
+        userId: userId.trim(),
+        email: email.trim().toLowerCase(),
+      });
 
       if (res.data.success) {
         toast.success(res.data.message);

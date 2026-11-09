@@ -13,6 +13,19 @@ const invoiceSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    patientId: {
+      type: String,
+      trim: true,
+    },
+    doctorName: {
+      type: String,
+      trim: true,
+    },
+    department: {
+      type: String,
+      trim: true,
+      default: "General",
+    },
     service: {
       type: String,
       required: true,

@@ -8,7 +8,15 @@ const getPatients = async (req, res) => {
     
     const patients = await Patient.find(filter).sort({ createdAt: -1 });
 
-    res.status(200).json({ patients });
+    const formattedPatients = patients.map((p) => {
+      const obj = p.toObject();
+      if (!obj.patientId && obj._id) {
+        obj.patientId = `PAT-${String(obj._id).slice(-4).toUpperCase()}`;
+      }
+      return obj;
+    });
+
+    res.status(200).json({ patients: formattedPatients });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -17,7 +25,11 @@ const getPatients = async (req, res) => {
 //  ADD PATIENT 
 const addPatient = async (req, res) => {
   try {
-    const patient = new Patient(req.body);
+    const patientData = { ...req.body };
+    const patient = new Patient(patientData);
+    if (!patient.patientId && patient._id) {
+      patient.patientId = `PAT-${String(patient._id).slice(-4).toUpperCase()}`;
+    }
     const savedPatient = await patient.save();
 
     res.status(201).json(savedPatient);

@@ -81,7 +81,7 @@ export const adminMenu = [
       {
         name: "Pharmacy",
         icon: <Pill size={18} />,
-        path: "/pharmacy/dashboard",
+        path: "/admin/pharmacy",
       },
       {
         name: "Billing",
