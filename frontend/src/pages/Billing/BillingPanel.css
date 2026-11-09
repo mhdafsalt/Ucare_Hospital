@@ -674,7 +674,7 @@
     padding: 16px 14px 40px 14px;
   }
 
-  .navbar-custom {
+  .billing-navbar-custom {
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
@@ -682,17 +682,17 @@
     border-radius: 14px;
   }
 
-  .navbar-left {
+  .billing-navbar-custom .navbar-left {
     justify-content: space-between;
     width: 100%;
   }
 
-  .navbar-search-wrapper {
+  .billing-navbar-custom .navbar-search-wrapper {
     max-width: 100%;
     width: 100%;
   }
 
-  .navbar-actions {
+  .billing-navbar-actions {
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -700,7 +700,7 @@
     flex-wrap: wrap;
   }
 
-  .navbar-actions .btn-quick-action {
+  .billing-navbar-actions .btn-quick-action {
     flex: 1;
     justify-content: center;
   }
@@ -782,12 +782,12 @@
     font-size: 20px;
   }
 
-  .navbar-actions {
+  .billing-navbar-actions {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .navbar-actions .admin-chip {
+  .billing-navbar-actions .admin-chip {
     width: 100%;
     justify-content: center;
   }

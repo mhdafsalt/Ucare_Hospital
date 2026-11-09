@@ -238,7 +238,7 @@ function AdminDashboard() {
       {/* MAIN CONTENT AREA */}
       <main className="main main-wrapper admin-main-canvas">
         {/* TOP NAVBAR COMPONENT */}
-        <header className="navbar-custom">
+        <header className="navbar-custom admin-navbar-custom">
           <div className="navbar-left">
             <button
               className="btn-quick-action"
@@ -263,7 +263,7 @@ function AdminDashboard() {
           </div>
 
           {/* Navbar Right Actions */}
-          <div className="navbar-actions">
+          <div className="navbar-actions admin-navbar-actions">
             <button
               className="navbar-action-btn"
               onClick={toggleFullscreen}

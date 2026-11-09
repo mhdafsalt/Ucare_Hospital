@@ -593,9 +593,9 @@ export default function PharmacyPanel() {
       {/* SIDEBAR NAVIGATION */}
       <Sidebar menuItems={effectiveMenu} panelSubtitle={panelSubtitle} />
 
-      <main className="main main-wrapper admin-main-canvas">
+      <main className="main main-wrapper admin-main-canvas pharmacy-main-canvas">
         {/* TOP NAVBAR BANNER */}
-        <header className="navbar-custom">
+        <header className="navbar-custom pharmacy-navbar-custom">
           <div className="navbar-left">
             <span className="pharmacy-badge-pill">
               <Pill size={15} />{" "}
@@ -630,7 +630,7 @@ export default function PharmacyPanel() {
             </button>
           </div>
 
-          <div className="navbar-actions">
+          <div className="navbar-actions pharmacy-navbar-actions">
             <button
               className="btn-quick-action"
               onClick={() => {

@@ -515,9 +515,9 @@ export default function BillingPanel() {
       {/* SIDEBAR NAVIGATION */}
       <Sidebar menuItems={currentMenu} panelSubtitle={panelSubtitle} />
 
-      <main className="main main-wrapper admin-main-canvas">
+      <main className="main main-wrapper admin-main-canvas billing-main-canvas">
         {/* TOP NAVBAR */}
-        <header className="navbar-custom">
+        <header className="navbar-custom billing-navbar-custom">
           <div className="navbar-left">
             <span className="billing-badge-pill">
               {activeTab === "payments" ? (
@@ -561,7 +561,7 @@ export default function BillingPanel() {
             </button>
           </div>
 
-          <div className="navbar-actions">
+          <div className="navbar-actions billing-navbar-actions">
             <button
               className="btn-quick-action"
               onClick={() => setShowInvoiceModal(true)}
