@@ -134,7 +134,7 @@ function AuthDropdown({ isOpen, onClose, placement = "right" }) {
       if (error.response && error.response.data && error.response.data.message) {
         toast.error(error.response.data.message);
       } else if (error.message === "Network Error") {
-        toast.error("Network Error: Backend server is not reachable on port 5000.");
+        toast.error("Network Error: Unable to reach the hospital server. Please check your internet connection.");
       } else if (error.message) {
         toast.error(`Login error: ${error.message}`);
       } else {

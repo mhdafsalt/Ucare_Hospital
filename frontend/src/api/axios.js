@@ -1,7 +1,25 @@
 import axios from "axios";
 
+/**
+ * Normalize and resolve the base API URL:
+ * - Uses VITE_API_URL environment variable if set.
+ * - In development without env, falls back to http://localhost:5000/api.
+ * - In production without env, defaults to the deployed Vercel backend: https://ucare-hospital.vercel.app/api.
+ * - Automatically ensures proper '/api' suffix and strips trailing slashes.
+ */
+const getBaseURL = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (!envUrl || envUrl.trim() === "") {
+    return import.meta.env.DEV
+      ? "http://localhost:5000/api"
+      : "https://ucare-hospital.vercel.app/api";
+  }
+  const cleaned = envUrl.trim().replace(/\/+$/, "");
+  return cleaned.endsWith("/api") ? cleaned : `${cleaned}/api`;
+};
+
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
+  baseURL: getBaseURL(),
 });
 
 API.interceptors.request.use((req) => {
