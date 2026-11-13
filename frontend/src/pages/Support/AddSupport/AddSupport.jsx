@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./addSupport.css";
+import "./AddSupport.css";
 import { IoArrowBack } from "react-icons/io5";
 import { addSupport } from "../../../api/supportApi";
 import { toast } from "react-toastify";

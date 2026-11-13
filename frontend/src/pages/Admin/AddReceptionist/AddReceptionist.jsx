@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../../components/Sidebar/Sidebar";
 import { motion, AnimatePresence } from "framer-motion";
-import "./addReceptionist.css";
+import "./AddReceptionist.css";
 import "../AdminPharmacist/AddPharmacist.css"; // Modal styling matching Pharmacist area
 import {
   Plus,

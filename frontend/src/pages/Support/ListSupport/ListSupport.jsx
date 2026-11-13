@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../../components/Sidebar/Sidebar";
 import { getSupports } from "../../../api/supportApi";
-import "./listSupport.css";
+import "./ListSupport.css";
 import {
     LayoutDashboard,
     HelpCircle,
@@ -9,7 +9,6 @@ import {
     UserRoundCog,
     Users,
 } from "lucide-react";
-import "./listSupport.css"; // Optional, can define styles here if needed
 
 const menuItems = [
     {

@@ -238,7 +238,7 @@ function Home() {
               <div className="vital-global-reach-title">
                 Serving patients
                 <br />
-                across 25+ countries
+                across 2+ countries
               </div>
 
               {/* STEM CONNECTOR */}
